@@ -1,0 +1,2204 @@
+<!doctype html>
+<!-- 図面練習CAD（入社前ノート）— 個人学習用。AutoCAD・Jw_cad 本体ではありません。 -->
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>図面練習CAD｜入社前ノート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6ECE8; --panel:#FFFFFF; --ink:#1D2926; --ink-2:#56665F; --line:#C5CFC9;
+  --accent:#28402F; --accent-ink:#EEF1E6; --tape:#C99A1E;
+  --paper:#FFFFFF; --desk:#CFD8D3; --frame:#8C9C95; --gridc:#A6B5AE;
+  --selc:#1F6FD1; --grip:#1F6FD1; --snap:#D17A00; --track:#2E9E62; --prev:#D17A00;
+  --l0:#5A6E8A; --l1:#18201D; --l2:#1F7A72; --l3:#2F62B0; --l4:#3B3F3D; --l5:#C0392B; --l6:#B86E00; --l7:#8A9590;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1513; --panel:#17201C; --ink:#E1E7E3; --ink-2:#9FB0A9; --line:#33433D;
+    --accent:#3D6A50; --accent-ink:#F0F3EA; --tape:#E0B544;
+    --paper:#0E1915; --desk:#070B0A; --frame:#4C5E57; --gridc:#3D5249;
+    --selc:#5AA2FF; --grip:#5AA2FF; --snap:#FFB020; --track:#4CD18A; --prev:#FFB020;
+    --l0:#8FA3C0; --l1:#EDEFEA; --l2:#5CC4B9; --l3:#7FA8F0; --l4:#C9CFCB; --l5:#FF7A6B; --l6:#F0A640; --l7:#7C8A84;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1513; --panel:#17201C; --ink:#E1E7E3; --ink-2:#9FB0A9; --line:#33433D;
+  --accent:#3D6A50; --accent-ink:#F0F3EA; --tape:#E0B544;
+  --paper:#0E1915; --desk:#070B0A; --frame:#4C5E57; --gridc:#3D5249;
+  --selc:#5AA2FF; --grip:#5AA2FF; --snap:#FFB020; --track:#4CD18A; --prev:#FFB020;
+  --l0:#8FA3C0; --l1:#EDEFEA; --l2:#5CC4B9; --l3:#7FA8F0; --l4:#C9CFCB; --l5:#FF7A6B; --l6:#F0A640; --l7:#7C8A84;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
+body{background:var(--bg);color:var(--ink);font-family:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;font-size:14px;line-height:1.55;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--tape);outline-offset:1px;border-radius:4px}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+#app{position:fixed;inset:0;display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr) auto;
+  grid-template-areas:"top top top" "tb stage side" "bar bar bar";
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+
+/* 上：コマンドライン */
+.top{grid-area:top;display:flex;align-items:center;gap:4px;padding:5px 8px;background:var(--panel);border-bottom:1px solid var(--line);min-width:0}
+.ib{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:34px;min-width:34px;padding:0 9px;border:1px solid var(--line);border-radius:7px;background:var(--panel);cursor:pointer;font-size:.84rem;white-space:nowrap;text-decoration:none;flex:none}
+.ib:disabled{opacity:.4;cursor:default}
+.ib[aria-pressed="true"],.ib.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.ib.go{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.cmdline{flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:1.5px solid var(--ink-2);border-radius:8px;padding:2px 4px 2px 10px;background:var(--bg);height:36px}
+#prompt{flex:1;min-width:0;overflow:hidden;font-size:.86rem;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-all}
+#prompt b{color:var(--accent);margin-right:.5em}
+:root[data-theme="dark"] #prompt b{color:var(--tape)}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) #prompt b{color:var(--tape)} }
+#cmd{width:9.5em;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:2px 8px;font-size:16px;font-variant-numeric:tabular-nums}
+.menu{position:relative;flex:none}
+.menu summary{list-style:none}
+.menu summary::-webkit-details-marker{display:none}
+.pop{position:absolute;right:0;top:calc(100% + 6px);z-index:40;display:flex;flex-direction:column;min-width:14em;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;box-shadow:0 10px 28px rgba(0,0,0,.2)}
+.pop button,.pop label{display:block;text-align:left;padding:9px 10px;border:0;background:transparent;border-radius:6px;cursor:pointer;font-size:.9rem}
+.pop button:hover,.pop label:hover{background:var(--bg)}
+.pop input[type=file]{display:none}
+.pop hr{border:0;border-top:1px solid var(--line);margin:4px 0}
+.danger{color:var(--l5)}
+
+/* 左：ツール */
+.tb{grid-area:tb;width:100px;display:flex;flex-direction:column;background:var(--panel);border-right:1px solid var(--line);min-height:0}
+.grp{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:5px;border-bottom:1px solid var(--line)}
+.grp button{height:26px;border:1px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer;font-size:.76rem;padding:0}
+.grp button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.tools{flex:1;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;align-content:start;gap:3px;padding:5px;scrollbar-width:thin}
+.tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;height:48px;padding:3px 1px 2px;border:1px solid transparent;border-radius:7px;background:transparent;cursor:pointer;font-size:.66rem;line-height:1.2;color:var(--ink-2)}
+.tool:hover{border-color:var(--line)}
+.tool[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.tool.t-dmg svg{stroke:var(--l5)} .tool.t-photo svg{stroke:var(--l6)}
+.tool[aria-pressed="true"] svg{stroke:currentColor}
+
+/* 中央：作図エリア */
+.stage{grid-area:stage;position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--desk)}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:crosshair}
+#cv.hand{cursor:grab}
+#optbar{position:absolute;left:8px;top:8px;right:60px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none;z-index:5}
+#optbar button{pointer-events:auto;height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--accent);background:var(--panel);color:var(--ink);cursor:pointer;font-size:.84rem;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+#optbar button.on{background:var(--accent);color:var(--accent-ink)}
+#tip{position:absolute;z-index:6;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:3px 8px;font-size:.78rem;line-height:1.45;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.15);font-variant-numeric:tabular-nums}
+#tip b{color:var(--snap)}
+#loupe{position:absolute;z-index:7;width:132px;height:132px;border-radius:50%;overflow:hidden;border:3px solid var(--accent);box-shadow:0 6px 20px rgba(0,0,0,.3);pointer-events:none;background:var(--paper)}
+#loupe svg{width:100%;height:100%;display:block}
+#loupe i{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;background:linear-gradient(var(--snap),var(--snap)) center/2px 100% no-repeat,linear-gradient(var(--snap),var(--snap)) center/100% 2px no-repeat;opacity:.85}
+.zoom{position:absolute;right:8px;bottom:8px;z-index:5;display:flex;flex-direction:column;gap:5px}
+.zoom button{width:44px;height:38px;border-radius:8px;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-size:.8rem;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.zoom button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+#keypad{position:absolute;right:60px;bottom:8px;z-index:8;display:grid;grid-template-columns:repeat(6,44px);gap:5px;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 26px rgba(0,0,0,.22)}
+#keypad[hidden]{display:none}
+#keypad button{height:36px;border-radius:8px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-size:1.05rem;font-variant-numeric:tabular-nums}
+#keypad .w2{grid-column:span 6;background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-size:.9rem;font-weight:700}
+#keypad .sm{font-size:.78rem}
+#toast{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:9;max-width:min(560px,80%);background:var(--ink);color:var(--panel);border-radius:10px;padding:8px 14px;font-size:.86rem;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}
+.stage.has-les #toast{bottom:auto;top:48px}
+#lesBar .lt{cursor:pointer}
+#lesBar{position:absolute;left:8px;right:60px;bottom:8px;z-index:6;display:flex;gap:8px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--tape);border-radius:8px;padding:6px 8px 6px 10px;box-shadow:0 4px 14px rgba(0,0,0,.14);font-size:.84rem;line-height:1.4;max-width:560px}
+#lesBar[hidden]{display:none}
+#lesBar .lt{flex:1;min-width:0}
+#lesBar .lt small{color:var(--ink-2);font-size:.76rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+#lesBar .lt b{color:var(--ink-2);font-weight:400;margin-right:.4em;font-size:.76rem}
+#lesBar button{flex:none;height:28px;padding:0 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer;font-size:.76rem}
+#rotHint{position:absolute;left:8px;right:8px;top:48px;z-index:4;display:none;background:var(--panel);border:1px solid var(--tape);border-radius:8px;padding:6px 10px;font-size:.82rem}
+@media (orientation:portrait) and (max-width:620px){ #rotHint{display:block} }
+
+/* 右：パネル */
+.side{grid-area:side;width:310px;display:flex;flex-direction:column;background:var(--panel);border-left:1px solid var(--line);min-height:0}
+.side.closed{display:none}
+.stabs{display:flex;border-bottom:1px solid var(--line);flex:none}
+.stabs button{flex:1;padding:8px 2px;border:0;border-bottom:3px solid transparent;background:transparent;cursor:pointer;font-size:.84rem;color:var(--ink-2)}
+.stabs button[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
+.pane{flex:1;min-height:0;overflow:auto;padding:10px 12px 24px;-webkit-overflow-scrolling:touch}
+.pane[hidden]{display:none}
+.pane h3{font-size:.95rem;margin:12px 0 6px}
+.pane h3:first-child{margin-top:2px}
+.pane p{margin:.4em 0}
+.note{font-size:.8rem;color:var(--ink-2)}
+.f{display:grid;grid-template-columns:5.6em 1fr auto;gap:6px;align-items:center;margin:6px 0;font-size:.86rem}
+.f input,.f select{width:100%;min-width:0;height:32px;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:2px 8px;font-size:16px}
+.f .u{font-size:.76rem;color:var(--ink-2)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:.84rem;margin:6px 0;font-variant-numeric:tabular-nums}
+.kv dt{color:var(--ink-2)} .kv dd{margin:0}
+.box{background:var(--bg);border-radius:8px;padding:8px 10px;font-size:.84rem;margin:8px 0}
+.row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.sb{height:32px;padding:0 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);cursor:pointer;font-size:.84rem}
+.sb.go{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.lys{list-style:none;margin:4px 0 8px;padding:0}
+.lys li{display:grid;grid-template-columns:28px 1fr auto auto auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:.86rem}
+.lys li.cur{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.lys .sw{width:22px;height:5px;border-radius:3px}
+.lys button{height:28px;min-width:40px;padding:0 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer;font-size:.74rem}
+.lys button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.lys .cnt{font-size:.74rem;color:var(--ink-2)}
+/* 練習（チュートリアル） */
+.les{list-style:none;padding:0;margin:4px 0}
+.les li{border-bottom:1px solid var(--line)}
+.les button{display:flex;gap:8px;align-items:baseline;width:100%;text-align:left;background:none;border:0;padding:9px 2px;cursor:pointer;font-size:.88rem}
+.les .no{flex:none;width:2.2em;font-size:.76rem;color:var(--ink-2)}
+.les .st{flex:none;margin-left:auto;font-size:.72rem;font-weight:700;padding:0 6px;border-radius:4px;background:var(--line)}
+.les .st.ok{background:var(--l2);color:#fff}
+.steps{list-style:none;padding:0;margin:8px 0;counter-reset:s}
+.steps li{position:relative;padding:8px 0 8px 32px;border-bottom:1px dashed var(--line);font-size:.86rem;counter-increment:s;color:var(--ink-2)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.74rem;border:1.5px solid var(--line)}
+.steps li.now{color:var(--ink)}
+.steps li.now::before{background:var(--tape);border-color:var(--tape);color:#fff}
+.steps li.ok::before{content:"✓";background:var(--l2);border-color:var(--l2);color:#fff}
+.steps li.ok{color:var(--ink-2)}
+.steps .h{display:block;font-size:.78rem;color:var(--ink-2);margin-top:3px}
+.steps li.now .h{color:var(--ink-2)}
+.steps input{width:7em;height:30px;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:2px 8px;font-size:16px}
+.hl{outline:3px solid var(--tape)!important;outline-offset:1px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{outline-color:transparent}}
+@media (prefers-reduced-motion:reduce){ .hl{animation:none} #toast{transition:none} }
+
+/* 下：ステータスバー */
+.bar{grid-area:bar;display:flex;align-items:center;gap:4px;padding:4px 8px;background:var(--panel);border-top:1px solid var(--line);overflow-x:auto;scrollbar-width:none;font-size:.78rem}
+.bar::-webkit-scrollbar{display:none}
+.bar button{flex:none;height:26px;padding:0 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer;font-size:.76rem;color:var(--ink-2)}
+.bar button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bar .sep{width:1px;height:18px;background:var(--line);margin:0 4px;flex:none}
+.bar select{flex:none;height:26px;font-size:.78rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:0 4px}
+#coord{flex:none;margin-left:auto;padding-left:10px;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* 説明書・ダイアログ */
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:0;max-width:min(980px,96vw);width:96vw;max-height:94vh;height:94vh}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+#dlg{height:auto;width:min(460px,92vw);padding:16px 18px}
+#dlg input{width:100%;margin:8px 0 12px;height:36px;font-size:16px;border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--bg)}
+.dlgb{display:flex;justify-content:flex-end;gap:8px}
+.man{display:grid;grid-template-columns:220px 1fr;height:100%}
+.man nav{border-right:1px solid var(--line);overflow:auto;padding:10px 8px}
+.man nav h2{font-size:1rem;margin:4px 6px 8px}
+.man nav button{display:block;width:100%;text-align:left;border:0;background:none;padding:7px 8px;border-radius:6px;cursor:pointer;font-size:.86rem;line-height:1.4}
+.man nav button[aria-current="true"]{background:var(--accent);color:var(--accent-ink)}
+.man article{overflow:auto;padding:16px 22px 40px;-webkit-overflow-scrolling:touch;line-height:1.8;font-size:.93rem}
+.man article h2{font-size:1.25rem;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid var(--ink-2)}
+.man article h3{font-size:1.02rem;margin:20px 0 6px}
+.man article p,.man article li{max-width:44em}
+.man article table{border-collapse:collapse;margin:8px 0;font-size:.86rem;min-width:min(100%,30em)}
+.man article th,.man article td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+.man article th{background:var(--bg);white-space:nowrap}
+.man .tw{overflow-x:auto}
+.man kbd{font-family:inherit;font-size:.82em;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--bg)}
+.man code{font-size:.92em;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:0 5px;font-variant-numeric:tabular-nums}
+.man .tipbox{border-left:4px solid var(--tape);background:var(--bg);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0;font-size:.88rem}
+.manhead{display:none}
+.manclose{position:absolute;right:10px;top:10px}
+@media (max-width:760px){
+  .man{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .man nav{border-right:0;border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:6px 50px 6px 6px}
+  .man nav h2{display:none}
+  .man nav button{flex:none;width:auto;white-space:nowrap}
+  .man article{padding:12px 14px 30px}
+}
+
+/* 画面が小さいとき（スマホ横向きなど） */
+@media (max-width:1100px){
+  .side{grid-area:auto;position:absolute;right:env(safe-area-inset-right,0px);top:calc(env(safe-area-inset-top,0px) + 45px);bottom:calc(env(safe-area-inset-bottom,0px) + 35px);z-index:30;width:min(330px,64vw);box-shadow:-8px 0 24px rgba(0,0,0,.18)}
+  #app{grid-template-columns:auto minmax(0,1fr) 0}
+}
+@media (max-width:900px){
+  .ib .lb{display:none}
+  .ib{padding:0 7px}
+  #cmd{width:7.5em}
+}
+@media (max-height:500px){
+  .top{padding:3px 6px}
+  .ib{height:32px}
+  .cmdline{height:34px}
+  .tb{width:92px}
+  .tool{height:44px;font-size:.62rem}
+  .grp button{height:24px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <a class="ib" href="index.html" title="入社前ノートへ" aria-label="入社前ノートへ"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span class="lb">ノート</span></a>
+    <button class="ib" id="bMan" title="説明書"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h6a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z"/></svg><span class="lb">説明書</span></button>
+    <button class="ib" id="bLearn" title="練習（チュートリアル）"><svg class="i" viewBox="0 0 24 24"><path d="M3 9l9-4 9 4-9 4zM7 11v4c0 1.5 2.5 3 5 3s5-1.5 5-3v-4"/></svg><span class="lb">練習</span></button>
+    <div class="cmdline">
+      <div id="prompt" aria-live="polite"></div>
+      <input id="cmd" type="text" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="数値・コマンド" aria-label="コマンド・数値の入力">
+    </div>
+    <button class="ib go" id="bEnter" title="確定（Enter）">確定</button>
+    <button class="ib" id="bEsc" title="取消（Esc）">取消</button>
+    <button class="ib" id="bKp" aria-pressed="false" title="数値キー"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h.01M12 8h.01M16 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h4"/></svg><span class="lb">数値</span></button>
+    <button class="ib" id="bUndo" title="元に戻す（Ctrl+Z）"><svg class="i" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg><span class="lb">戻す</span></button>
+    <button class="ib" id="bRedo" title="やり直し（Ctrl+Y）"><svg class="i" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 000 12h3"/></svg></button>
+    <details class="menu" id="mFile"><summary class="ib" title="ファイル"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h.01M12 12h.01M19 12h.01"/></svg><span class="lb">ファイル</span></summary>
+      <div class="pop">
+        <button id="fPng">PNG画像で保存（A3・1/100）</button>
+        <button id="fDxf">DXFで書き出す（ほかのCAD用）</button>
+        <hr>
+        <button id="fJson">図面データを保存</button>
+        <label>図面データを開く<input type="file" id="fOpen" accept=".json,application/json"></label>
+        <hr>
+        <button id="fNew" class="danger">新しい図面にする</button>
+      </div>
+    </details>
+    <button class="ib" id="bPanel" aria-pressed="true" title="パネル"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg><span class="lb">パネル</span></button>
+  </header>
+
+  <nav class="tb" aria-label="ツール">
+    <div class="grp" role="tablist" id="grp">
+      <button role="tab" data-g="draw" aria-selected="true">描く</button>
+      <button role="tab" data-g="edit" aria-selected="false">修正</button>
+      <button role="tab" data-g="meas" aria-selected="false">測る</button>
+      <button role="tab" data-g="hosho" aria-selected="false">補償</button>
+    </div>
+    <div class="tools" id="tools"></div>
+  </nav>
+
+  <main class="stage" id="stage">
+    <svg id="cv" xmlns="http://www.w3.org/2000/svg" aria-label="作図エリア">
+      <defs><pattern id="gp" patternUnits="userSpaceOnUse" x="0" y="0" width="910" height="910"><circle id="gpc" cx="0" cy="0" r="12" style="fill:var(--gridc)"/></pattern></defs>
+      <g id="world">
+        <g id="gPaper"></g>
+        <rect id="gridRect" x="0" y="-29700" width="42000" height="29700" style="fill:url(#gp)" pointer-events="none"/>
+        <g id="gTitle"></g>
+        <g id="gEnt"></g>
+        <g id="gSel"></g>
+        <g id="gHov"></g>
+        <g id="gPrev"></g>
+      </g>
+    </svg>
+    <div id="optbar"></div>
+    <div id="tip" hidden></div>
+    <div id="loupe" hidden><svg id="lsvg" xmlns="http://www.w3.org/2000/svg"><use href="#world"/></svg><i></i></div>
+    <div class="zoom">
+      <button id="zIn" aria-label="拡大">＋</button>
+      <button id="zOut" aria-label="縮小">－</button>
+      <button id="zFit">全体</button>
+      <button id="bHand" aria-pressed="false" title="画面移動（ドラッグで動かす）">手</button>
+    </div>
+    <div id="keypad" hidden aria-label="数値キー"></div>
+    <div id="toast" role="status"></div>
+    <div id="lesBar" hidden></div>
+    <div id="rotHint">スマホは横向きにすると広く使えます。</div>
+  </main>
+
+  <aside class="side" id="side">
+    <div class="stabs" role="tablist">
+      <button role="tab" data-p="prop" aria-selected="true">プロパティ</button>
+      <button role="tab" data-p="layer" aria-selected="false">レイヤ</button>
+      <button role="tab" data-p="learn" aria-selected="false">練習</button>
+      <button role="tab" data-p="set" aria-selected="false">設定</button>
+    </div>
+    <div class="pane" id="p-prop"></div>
+    <div class="pane" id="p-layer" hidden></div>
+    <div class="pane" id="p-learn" hidden></div>
+    <div class="pane" id="p-set" hidden></div>
+  </aside>
+
+  <footer class="bar" id="bar">
+    <button data-os="all" title="オブジェクトスナップ全体（F3）">スナップ</button>
+    <button data-os="end" title="端点">□ 端点</button>
+    <button data-os="mid" title="中点">△ 中点</button>
+    <button data-os="int" title="交点">× 交点</button>
+    <button data-os="cen" title="中心">○ 中心</button>
+    <button data-os="per" title="垂線">⊥ 垂線</button>
+    <button data-os="nea" title="近接点">近接点</button>
+    <span class="sep"></span>
+    <button id="tOrtho" title="直交モード（F8）">直交</button>
+    <button id="tPolar" title="極トラッキング（F10）">極 45°</button>
+    <button id="tGrid" title="グリッドに吸着（F9）">グリッド</button>
+    <span class="sep"></span>
+    <label for="curLayer" class="note" style="flex:none">現在レイヤ</label>
+    <select id="curLayer" aria-label="現在レイヤ"></select>
+    <span id="coord">X — Y —</span>
+  </footer>
+</div>
+
+<dialog id="manual" aria-label="説明書">
+  <div class="man">
+    <nav id="manNav"><h2>説明書</h2></nav>
+    <article id="manBody"></article>
+  </div>
+  <form method="dialog" class="manclose"><button class="ib">閉じる</button></form>
+</dialog>
+
+<dialog id="dlg">
+  <form method="dialog">
+    <p id="dlgT" style="margin:0 0 4px"></p>
+    <input id="dlgIn" type="text" autocomplete="off">
+    <div class="dlgb"><button class="sb" value="cancel">やめる</button><button class="sb go" value="ok">OK</button></div>
+  </form>
+</dialog>
+
+<script>
+(function(){
+'use strict';
+const $ = (s,r) => (r||document).querySelector(s);
+const $$ = (s,r) => Array.from((r||document).querySelectorAll(s));
+const svg = $('#cv'), gEnt = $('#gEnt'), gSel = $('#gSel'), gHov = $('#gHov'), gPrev = $('#gPrev'), gPaper = $('#gPaper'), gTitle = $('#gTitle');
+const PI = Math.PI, TAU = 2*Math.PI, EPS = 1e-6;
+
+/* ================= 定数 ================= */
+const LAYERS = [
+  {id:'grid', name:'0 通り芯', v:'--l0', dash:'center', aci:8, dxf:'A-GRID'},
+  {id:'wall', name:'1 壁', v:'--l1', w:2, aci:7, dxf:'A-WALL'},
+  {id:'door', name:'2 建具・家具', v:'--l2', aci:4, dxf:'A-DOOR'},
+  {id:'dim',  name:'3 寸法', v:'--l3', w:0.8, aci:5, dxf:'A-DIMS'},
+  {id:'text', name:'4 文字', v:'--l4', aci:7, dxf:'A-TEXT'},
+  {id:'dmg',  name:'5 損傷', v:'--l5', w:1.6, aci:1, dxf:'A-DMG'},
+  {id:'photo',name:'6 写真', v:'--l6', aci:30, dxf:'A-PHOTO'},
+  {id:'aux',  name:'7 補助線', v:'--l7', dash:'dot', w:0.8, aci:9, dxf:'A-AUX'}
+];
+const LBY = {}; LAYERS.forEach(l => LBY[l.id] = l);
+const LIT = {'--l0':'#5A6E8A','--l1':'#111111','--l2':'#1F7A72','--l3':'#2F62B0','--l4':'#333333','--l5':'#C0392B','--l6':'#B86E00','--l7':'#8A9590'};
+const PAPER = {w:42000, h:29700};
+const DIMH = 250;                       /* 寸法文字：用紙上2.5mm */
+const FONT = 'font-family="BIZ UDPGothic, Hiragino Sans, Meiryo, sans-serif"';
+const OSN = {end:'端点', mid:'中点', int:'交点', cen:'中心', per:'垂線', nea:'近接点', ins:'挿入点'};
+const TYPE_JA = {line:'線', pline:'ポリライン', circle:'円', arc:'円弧', text:'文字', dim:'寸法', photo:'撮影位置'};
+
+/* ================= 状態 ================= */
+const DEF_ST = () => ({layer:'wall', lay:{}, os:{end:1,mid:1,int:1,cen:1,per:1,nea:0}, osOn:1, ortho:0, polar:1, polarInc:45,
+  grid:910, gridSnap:0, rclick:'enter', wheel:'zoom', th:250, g:'draw', side:'prop', sideOpen:null, kp:0, offD:60, offLayer:'src', dimMode:'auto',
+  lesDone:{}, theme:'auto'});
+let doc = {v:3, ents:[], next:1, photoNo:1};
+let st = DEF_ST();
+const KEY = 'cad-practice-v2';
+function migrateV1(old){
+  /* 旧版（下向きY・rect/crack 形式）を新形式へ */
+  const ents = []; let id = 1;
+  (old.shapes || []).forEach(s => {
+    const L = s.layer || 'wall';
+    if(s.type === 'line') ents.push({id:id++, type:'line', layer:L, x1:s.x1, y1:-s.y1, x2:s.x2, y2:-s.y2});
+    else if(s.type === 'rect'){ const x0 = s.x, y0 = -(s.y + s.h); ents.push({id:id++, type:'pline', layer:L, closed:true, pts:[[x0,y0],[x0+s.w,y0],[x0+s.w,y0+s.h],[x0,y0+s.h]]}); }
+    else if(s.type === 'crack') ents.push({id:id++, type:'pline', layer:L, closed:false, pts:s.p.map(q => [q[0], -q[1]])});
+    else if(s.type === 'text') ents.push({id:id++, type:'text', layer:L, x:s.x, y:-s.y, t:s.t, h:300, rot:0});
+    else if(s.type === 'photo') ents.push({id:id++, type:'photo', layer:L, x:s.x, y:-s.y, a:-s.a, n:s.n});
+    else if(s.type === 'dim') ents.push({id:id++, type:'dim', layer:L, x1:s.x1, y1:-s.y1, x2:s.x2, y2:-s.y2, mode:'a', off:-s.d, ovr:''});
+  });
+  return {v:3, ents, next:id, photoNo:old.photoNo || 1};
+}
+try{
+  const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
+  if(raw && raw.doc && Array.isArray(raw.doc.ents)){ doc = raw.doc; if(raw.st) st = Object.assign(DEF_ST(), raw.st); }
+  else {
+    const v1 = JSON.parse(localStorage.getItem('cad-practice-v1') || 'null');
+    if(v1 && v1.doc && Array.isArray(v1.doc.shapes) && v1.doc.shapes.length) doc = migrateV1(v1.doc);
+  }
+}catch(e){}
+st.os = Object.assign({end:1,mid:1,int:1,cen:1,per:1,nea:0}, st.os || {});
+LAYERS.forEach(l => { if(!st.lay[l.id]) st.lay[l.id] = {vis:true, lock:false}; });
+if(!LBY[st.layer]) st.layer = 'wall';
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify({doc, st})); }catch(e){} }
+
+let sel = new Set(), hoverId = null;
+let undoS = [], redoS = [];
+let view = {cx:9000, cy:9000, s:0.06, init:false};
+const ev = {zoom:0, pan:0, fit:0, undo:0, kp:0, sel:0, start:{}, done:{}, exp:{png:0,dxf:0,json:0}, area:null, dist:null, prop:0};
+
+/* ================= 共通 ================= */
+const P = (x,y) => ({x, y});
+const sub = (a,b) => P(a.x-b.x, a.y-b.y), add = (a,b) => P(a.x+b.x, a.y+b.y), mul = (a,k) => P(a.x*k, a.y*k);
+const dot = (a,b) => a.x*b.x + a.y*b.y, crs = (a,b) => a.x*b.y - a.y*b.x;
+const len = a => Math.hypot(a.x, a.y), dist = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
+const unit = a => { const l = len(a) || 1; return P(a.x/l, a.y/l); };
+const lnorm = u => P(-u.y, u.x);
+const ang = a => Math.atan2(a.y, a.x);
+const normA = a => { a %= TAU; if(a < 0) a += TAU; if(a >= TAU - 1e-8) a = 0; return a; };
+const normS = a => { a = normA(a); return a > PI ? a - TAU : a; };
+const pol = (c,r,a) => P(c.x + r*Math.cos(a), c.y + r*Math.sin(a));
+const rnd = v => Math.round(v*1000)/1000;
+const rp = p => P(rnd(p.x), rnd(p.y));
+const ra = v => Math.round(v*1e9)/1e9;   /* 角度は丸めすぎない（端点がずれるため） */
+const deg = r => r*180/PI;
+const near = (a,b,t) => Math.abs(a-b) < (t == null ? 0.6 : t);
+const ptEq = (a,b,t) => dist(a,b) < (t == null ? 0.6 : t);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtN = n => (Math.abs(n - Math.round(n)) < 0.005 ? Math.round(n).toLocaleString('ja-JP') : (Math.round(n*100)/100).toLocaleString('ja-JP', {maximumFractionDigits:2}));
+const fmtA = r => { let d = deg(normA(r)); if(d > 359.995) d = 0; return (Math.round(d*100)/100) + '°'; };
+const clone = o => JSON.parse(JSON.stringify(o));
+const ent = id => doc.ents.find(e => e.id === id);
+const visible = e => st.lay[e.layer] ? st.lay[e.layer].vis : true;
+const locked = e => st.lay[e.layer] ? st.lay[e.layer].lock : false;
+function W(){ return svg.clientWidth || 800; }
+function H(){ return svg.clientHeight || 450; }
+
+/* ================= 幾何 ================= */
+function span(e){ const s = normA(e.a2 - e.a1); return s < 1e-9 ? TAU : s; }
+function prims(e){
+  switch(e.type){
+    case 'line': return [{k:'s', a:P(e.x1,e.y1), b:P(e.x2,e.y2)}];
+    case 'pline': {
+      const ps = e.pts.map(q => P(q[0],q[1])), out = [];
+      for(let i=0;i<ps.length-1;i++) out.push({k:'s', a:ps[i], b:ps[i+1]});
+      if(e.closed && ps.length > 2) out.push({k:'s', a:ps[ps.length-1], b:ps[0]});
+      return out;
+    }
+    case 'circle': return [{k:'c', c:P(e.cx,e.cy), r:e.r, a1:0, a2:TAU, full:true}];
+    case 'arc': return [{k:'c', c:P(e.cx,e.cy), r:e.r, a1:normA(e.a1), a2:normA(e.a1) + span(e)}];
+  }
+  return [];
+}
+function onArc(pr, th){ if(pr.full) return true; const d = normA(th - pr.a1), tol = 1e-7 + 1e-4/Math.max(pr.r, 1); return d <= (pr.a2 - pr.a1) + tol || d >= TAU - tol; }
+function interSS(p, q){
+  const r = sub(p.b,p.a), s = sub(q.b,q.a), den = crs(r,s);
+  if(Math.abs(den) < 1e-12) return [];
+  const qp = sub(q.a,p.a), t = crs(qp,s)/den, u = crs(qp,r)/den, e = 1e-9;
+  if(t < -e || t > 1+e || u < -e || u > 1+e) return [];
+  return [add(p.a, mul(r,t))];
+}
+function lineCircle(a, b, c, r){
+  const d = sub(b,a), f = sub(a,c), A = dot(d,d), B = 2*dot(f,d), Cc = dot(f,f) - r*r;
+  let disc = B*B - 4*A*Cc;
+  if(disc < -1e-9 || A < 1e-18) return [];
+  disc = Math.sqrt(Math.max(0, disc));
+  const t1 = (-B - disc)/(2*A), t2 = (-B + disc)/(2*A), out = [{t:t1, pt:add(a, mul(d,t1))}];
+  if(disc > 1e-9) out.push({t:t2, pt:add(a, mul(d,t2))});
+  return out;
+}
+function interSC(s, c){ return lineCircle(s.a, s.b, c.c, c.r).filter(o => o.t >= -1e-9 && o.t <= 1+1e-9 && onArc(c, ang(sub(o.pt, c.c)))).map(o => o.pt); }
+function interCC(p, q){
+  const d = dist(p.c, q.c);
+  if(d < 1e-9 || d > p.r + q.r + 1e-9 || d < Math.abs(p.r - q.r) - 1e-9) return [];
+  const a = (p.r*p.r - q.r*q.r + d*d)/(2*d), h = Math.sqrt(Math.max(0, p.r*p.r - a*a));
+  const u = unit(sub(q.c, p.c)), m = add(p.c, mul(u,a)), n = lnorm(u);
+  const pts = h < 1e-9 ? [m] : [add(m, mul(n,h)), sub(m, mul(n,h))];
+  return pts.filter(x => onArc(p, ang(sub(x,p.c))) && onArc(q, ang(sub(x,q.c))));
+}
+function interPrim(p, q){
+  if(p.k === 's' && q.k === 's') return interSS(p,q);
+  if(p.k === 's') return interSC(p,q);
+  if(q.k === 's') return interSC(q,p);
+  return interCC(p,q);
+}
+function closestPrim(pr, p){
+  if(pr.k === 's'){ const d = sub(pr.b,pr.a), L = dot(d,d); let t = L ? dot(sub(p,pr.a),d)/L : 0; t = Math.max(0, Math.min(1,t)); return add(pr.a, mul(d,t)); }
+  const a = ang(sub(p, pr.c));
+  if(!onArc(pr, a)){ const s = pol(pr.c, pr.r, pr.a1), e = pol(pr.c, pr.r, pr.a2); return dist(p,s) < dist(p,e) ? s : e; }
+  return pol(pr.c, pr.r, a);
+}
+function textW(e){ let w = 0; for(const ch of String(e.t)) w += /[\x20-\x7e]/.test(ch) ? 0.6 : 1; return w * e.h; }
+function textCorners(e){
+  const w = textW(e), h = e.h, r = e.rot || 0, c = Math.cos(r), s = Math.sin(r);
+  return [P(0,-0.2*h), P(w,-0.2*h), P(w,h), P(0,h)].map(q => P(e.x + q.x*c - q.y*s, e.y + q.x*s + q.y*c));
+}
+function dimGeom(e){
+  const p1 = P(e.x1,e.y1), p2 = P(e.x2,e.y2); let A, B, val;
+  if(e.mode === 'h'){ A = P(p1.x, e.off); B = P(p2.x, e.off); val = Math.abs(p2.x - p1.x); }
+  else if(e.mode === 'v'){ A = P(e.off, p1.y); B = P(e.off, p2.y); val = Math.abs(p2.y - p1.y); }
+  else { const u = unit(sub(p2,p1)), n = lnorm(u); A = add(p1, mul(n,e.off)); B = add(p2, mul(n,e.off)); val = dist(p1,p2); }
+  let th = len(sub(B,A)) > 1e-9 ? ang(sub(B,A)) : 0;
+  if(th > PI/2 + 1e-6) th -= PI; else if(th <= -PI/2 + 1e-6) th += PI;
+  const up = P(-Math.sin(th), Math.cos(th)), mid = mul(add(A,B), 0.5);
+  return {p1, p2, A, B, val, th, tp:add(mid, mul(up, 70)), up};
+}
+function dimLinePt(e){ const g = dimGeom(e); return mul(add(g.A, g.B), 0.5); }
+function setDimFrom(e, p1, p2, lp, axisOK, swap){
+  e.x1 = rnd(p1.x); e.y1 = rnd(p1.y); e.x2 = rnd(p2.x); e.y2 = rnd(p2.y);
+  if(e.mode !== 'a' && axisOK){ if(swap) e.mode = e.mode === 'h' ? 'v' : 'h'; e.off = rnd(e.mode === 'h' ? lp.y : lp.x); }
+  else { e.mode = 'a'; const n = lnorm(unit(sub(p2,p1))); e.off = rnd(dot(sub(lp,p1), n)); }
+}
+function ebox(e){
+  let pts = [];
+  if(e.type === 'line') pts = [P(e.x1,e.y1), P(e.x2,e.y2)];
+  else if(e.type === 'pline') pts = e.pts.map(q => P(q[0],q[1]));
+  else if(e.type === 'circle') pts = [P(e.cx-e.r,e.cy-e.r), P(e.cx+e.r,e.cy+e.r)];
+  else if(e.type === 'arc'){ const pr = prims(e)[0]; pts = [pol(pr.c,pr.r,pr.a1), pol(pr.c,pr.r,pr.a2)]; for(let k=0;k<4;k++){ const a = k*PI/2; if(onArc(pr,a)) pts.push(pol(pr.c,pr.r,a)); } }
+  else if(e.type === 'text') pts = textCorners(e);
+  else if(e.type === 'dim'){ const g = dimGeom(e); pts = [g.p1, g.p2, g.A, g.B, add(g.tp, mul(g.up, DIMH))]; }
+  else if(e.type === 'photo'){ pts = [P(e.x-180,e.y-180), P(e.x+180,e.y+180), pol(P(e.x,e.y), 720, e.a)]; }
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  return {x0:Math.min(...xs), y0:Math.min(...ys), x1:Math.max(...xs), y1:Math.max(...ys)};
+}
+function hitDist(e, p, tol){
+  if(e.type === 'text'){
+    const r = -(e.rot || 0), q = sub(p, P(e.x,e.y)), lx = q.x*Math.cos(r) - q.y*Math.sin(r), ly = q.x*Math.sin(r) + q.y*Math.cos(r);
+    return (lx >= -tol && lx <= textW(e) + tol && ly >= -0.2*e.h - tol && ly <= e.h + tol) ? 0 : Infinity;
+  }
+  if(e.type === 'dim'){
+    const g = dimGeom(e); let d = Math.min(closestD({k:'s',a:g.A,b:g.B}, p), closestD({k:'s',a:g.p1,b:g.A}, p), closestD({k:'s',a:g.p2,b:g.B}, p));
+    if(dist(p, add(g.tp, mul(g.up, DIMH/2))) < DIMH) d = 0;
+    return d;
+  }
+  if(e.type === 'photo'){ const c = P(e.x,e.y); return Math.min(Math.max(0, dist(p,c) - 180), closestD({k:'s', a:c, b:pol(c,720,e.a)}, p)); }
+  let d = Infinity; prims(e).forEach(pr => { d = Math.min(d, closestD(pr, p)); });
+  return d;
+}
+function closestD(pr, p){ return dist(p, closestPrim(pr, p)); }
+function hitEnt(p, opts){
+  opts = opts || {};
+  const tol = (opts.tol || 10)/view.s; let best = null, bd = tol;
+  for(let i = doc.ents.length-1; i >= 0; i--){
+    const e = doc.ents[i];
+    if(!visible(e) || (locked(e) && !opts.allowLocked)) continue;
+    if(opts.types && opts.types.indexOf(e.type) < 0) continue;
+    const d = hitDist(e, p, tol);
+    if(d < bd){ bd = d; best = e; }
+  }
+  return best;
+}
+/* 矩形判定（閉じた4点の軸平行ポリライン） */
+function rectInfo(e){
+  if(!e || e.type !== 'pline' || !e.closed || e.pts.length !== 4) return null;
+  const xs = e.pts.map(q => q[0]), ys = e.pts.map(q => q[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const ok = e.pts.every(q => (near(q[0],x0,0.01) || near(q[0],x1,0.01)) && (near(q[1],y0,0.01) || near(q[1],y1,0.01)));
+  return ok ? {x0, y0, w:x1-x0, h:y1-y0} : null;
+}
+function polyArea(ps){ let a = 0; for(let i=0;i<ps.length;i++){ const p = ps[i], q = ps[(i+1)%ps.length]; a += p.x*q.y - q.x*p.y; } return a/2; }
+function perim(ps, closed){ let L = 0; for(let i=0;i<ps.length-(closed?0:1);i++) L += dist(ps[i], ps[(i+1)%ps.length]); return L; }
+function inPoly(p, ps){ let c = false; for(let i=0, j=ps.length-1; i<ps.length; j=i++){ const a = ps[i], b = ps[j]; if(((a.y > p.y) !== (b.y > p.y)) && (p.x < (b.x - a.x)*(p.y - a.y)/(b.y - a.y) + a.x)) c = !c; } return c; }
+function areaOf(e){
+  if(e.type === 'pline' && e.closed){ const ps = e.pts.map(q => P(q[0],q[1])); return {a:Math.abs(polyArea(ps)), l:perim(ps,true)}; }
+  if(e.type === 'circle') return {a:PI*e.r*e.r, l:TAU*e.r};
+  return null;
+}
+function areaRule(mm2){
+  const m2 = mm2/1e6;
+  return {m2, a4:Math.floor(m2*10000 + 1e-7)/10000, a2:Math.floor(m2*100 + 1e-7)/100};
+}
+
+/* ---- ポリライン長さ・部分 ---- */
+function plInfo(ps, closed){
+  const segs = []; let acc = 0; const n = ps.length, m = closed ? n : n-1;
+  for(let i=0;i<m;i++){ const a = ps[i], b = ps[(i+1)%n], L = dist(a,b); segs.push({a, b, s0:acc, L}); acc += L; }
+  return {segs, total:acc};
+}
+function ptAtS(info, s){
+  for(const g of info.segs){ if(s <= g.s0 + g.L + 1e-9){ const t = g.L ? (s - g.s0)/g.L : 0; return add(g.a, mul(sub(g.b,g.a), Math.max(0, Math.min(1,t)))); } }
+  return info.segs[info.segs.length-1].b;
+}
+function subPath(info, s0, s1){
+  const out = [ptAtS(info, s0)];
+  for(const g of info.segs){ const v = g.s0 + g.L; if(v > s0 + 1e-6 && v < s1 - 1e-6) out.push(g.b); }
+  out.push(ptAtS(info, s1));
+  return out;
+}
+function sOf(info, p){
+  let best = Infinity, bs = 0;
+  for(const g of info.segs){ const d = sub(g.b,g.a), L2 = dot(d,d); let t = L2 ? dot(sub(p,g.a),d)/L2 : 0; t = Math.max(0, Math.min(1,t)); const q = add(g.a, mul(d,t)), dd = dist(p,q); if(dd < best){ best = dd; bs = g.s0 + t*g.L; } }
+  return bs;
+}
+function uniqSorted(a){ a.sort((x,y) => x-y); const o = []; a.forEach(v => { if(!o.length || Math.abs(v - o[o.length-1]) > 1e-6) o.push(v); }); return o; }
+
+/* ---- トリム ---- */
+function cutPts(e){
+  const mine = prims(e), pts = [];
+  doc.ents.forEach(o => { if(o.id === e.id || !visible(o)) return; const op = prims(o); if(!op.length) return;
+    mine.forEach(a => op.forEach(b => interPrim(a,b).forEach(p => pts.push(p)))); });
+  return pts;
+}
+function trimEnt(e, click){
+  const pts = cutPts(e), mk = (o) => Object.assign(clone(e), o);
+  if(e.type === 'line'){
+    const a = P(e.x1,e.y1), b = P(e.x2,e.y2), d = sub(b,a), L2 = dot(d,d);
+    const tp = q => L2 ? dot(sub(q,a),d)/L2 : 0;
+    const ts = uniqSorted(pts.map(tp).filter(t => t > 1e-6 && t < 1-1e-6)), tc = Math.max(0, Math.min(1, tp(click)));
+    if(!ts.length) return {del:true};
+    let lo = null, hi = null; ts.forEach(t => { if(t < tc) lo = t; else if(hi === null) hi = t; });
+    const out = [];
+    if(lo !== null){ const q = add(a, mul(d,lo)); out.push(mk({x2:rnd(q.x), y2:rnd(q.y)})); }
+    if(hi !== null){ const q = add(a, mul(d,hi)); out.push(mk({x1:rnd(q.x), y1:rnd(q.y)})); }
+    return {repl:out};
+  }
+  if(e.type === 'arc' || e.type === 'circle'){
+    const pr = prims(e)[0], c = pr.c;
+    if(e.type === 'circle'){
+      const as = uniqSorted(pts.map(q => normA(ang(sub(q,c)))));
+      if(!as.length) return {del:true};
+      if(as.length < 2) return {msg:'円をトリムするには、2か所以上で交わる境界が必要です'};
+      const ac = normA(ang(sub(click,c)));
+      let lo = null, hi = null; as.forEach(v => { if(v < ac) lo = v; else if(hi === null) hi = v; });
+      if(lo === null) lo = as[as.length-1]; if(hi === null) hi = as[0];
+      return {repl:[{id:e.id, type:'arc', layer:e.layer, cx:e.cx, cy:e.cy, r:e.r, a1:ra(hi), a2:ra(lo)}]};
+    }
+    const sp = span(e), a1 = normA(e.a1);
+    const fs = uniqSorted(pts.map(q => normA(ang(sub(q,c)) - a1)).filter(f => f > 1e-6 && f < sp - 1e-6));
+    if(!fs.length) return {del:true};
+    let fc = normA(ang(sub(click,c)) - a1); if(fc > sp) fc = fc - sp > TAU - fc ? 0 : sp;
+    let lo = null, hi = null; fs.forEach(f => { if(f < fc) lo = f; else if(hi === null) hi = f; });
+    const out = [];
+    if(lo !== null) out.push(mk({a1:ra(a1), a2:ra(a1+lo)}));
+    if(hi !== null) out.push(mk({a1:ra(normA(a1+hi)), a2:ra(normA(a1+hi) + (sp-hi))}));
+    return {repl:out};
+  }
+  if(e.type === 'pline'){
+    const ps = e.pts.map(q => P(q[0],q[1])), info = plInfo(ps, e.closed), T = info.total;
+    let ss = uniqSorted(pts.map(q => sOf(info,q)));
+    const sc = sOf(info, click);
+    const toPl = arr => ({type:'pline', layer:e.layer, closed:false, pts:arr.map(q => [rnd(q.x), rnd(q.y)])});
+    if(!e.closed){
+      ss = ss.filter(s => s > 1e-6 && s < T - 1e-6);
+      if(!ss.length) return {del:true};
+      let lo = null, hi = null; ss.forEach(s => { if(s < sc) lo = s; else if(hi === null) hi = s; });
+      const out = [];
+      if(lo !== null && lo > 1e-3) out.push(Object.assign(toPl(subPath(info, 0, lo)), {id:e.id}));
+      if(hi !== null && T - hi > 1e-3) out.push(toPl(subPath(info, hi, T)));
+      return {repl:out};
+    }
+    ss = ss.filter(s => s < T - 1e-6);
+    if(!ss.length) return {del:true};
+    if(ss.length < 2) return {msg:'閉じた図形をトリムするには、2か所以上で交わる境界が必要です'};
+    let lo = null, hi = null; ss.forEach(s => { if(s < sc) lo = s; else if(hi === null) hi = s; });
+    if(lo === null) lo = ss[ss.length-1]; if(hi === null) hi = ss[0];
+    let arr;
+    if(hi < lo) arr = subPath(info, hi, lo);
+    else { const a = subPath(info, hi, T), b = subPath(info, 0, lo); b.shift(); arr = a.concat(b); }
+    return {repl:[Object.assign(toPl(arr), {id:e.id})]};
+  }
+  return {msg:'この図形はトリムできません'};
+}
+/* ---- 延長 ---- */
+function bounds(e){ const out = []; doc.ents.forEach(o => { if(o.id !== e.id && visible(o)) prims(o).forEach(p => out.push(p)); }); return out; }
+function rayHit(o, dir, prs){
+  let best = Infinity;
+  prs.forEach(pr => {
+    if(pr.k === 's'){
+      const s = sub(pr.b,pr.a), den = crs(dir,s); if(Math.abs(den) < 1e-12) return;
+      const qp = sub(pr.a,o), u = crs(qp,s)/den, t = crs(qp,dir)/den;
+      if(u > 1e-6 && t >= -1e-9 && t <= 1+1e-9 && u < best) best = u;
+    } else {
+      lineCircle(o, add(o,dir), pr.c, pr.r).forEach(h => { if(h.t > 1e-6 && onArc(pr, ang(sub(h.pt,pr.c))) && h.t < best) best = h.t; });
+    }
+  });
+  return best;
+}
+function extendEnt(e, click){
+  const prs = bounds(e);
+  if(e.type === 'line' || (e.type === 'pline' && !e.closed)){
+    let a, b, atStart;
+    if(e.type === 'line'){ const p1 = P(e.x1,e.y1), p2 = P(e.x2,e.y2); atStart = dist(click,p1) < dist(click,p2); a = atStart ? p2 : p1; b = atStart ? p1 : p2; }
+    else { const ps = e.pts, n = ps.length, s0 = P(ps[0][0],ps[0][1]), sN = P(ps[n-1][0],ps[n-1][1]); atStart = dist(click,s0) < dist(click,sN);
+      b = atStart ? s0 : sN; a = atStart ? P(ps[1][0],ps[1][1]) : P(ps[n-2][0],ps[n-2][1]); }
+    const dir = unit(sub(b,a)), u = rayHit(b, dir, prs);
+    if(!isFinite(u)) return {msg:'延長先になる境界が見つかりません'};
+    const q = rp(add(b, mul(dir,u))), out = clone(e);
+    if(e.type === 'line'){ if(atStart){ out.x1 = q.x; out.y1 = q.y; } else { out.x2 = q.x; out.y2 = q.y; } }
+    else { if(atStart) out.pts[0] = [q.x,q.y]; else out.pts[out.pts.length-1] = [q.x,q.y]; }
+    return {repl:[out]};
+  }
+  if(e.type === 'arc'){
+    const c = P(e.cx,e.cy), full = {k:'c', c, r:e.r, a1:0, a2:TAU, full:true}, sp = span(e), a1 = normA(e.a1), a2 = a1 + sp;
+    const hits = []; prs.forEach(pr => interPrim(full, pr).forEach(p => hits.push(normA(ang(sub(p,c))))));
+    const atEnd = dist(click, pol(c,e.r,a2)) < dist(click, pol(c,e.r,a1));
+    let best = Infinity;
+    hits.forEach(h => { const dlt = atEnd ? normA(h - a2) : normA(a1 - h); if(dlt > 1e-6 && dlt < TAU - sp - 1e-6 && dlt < best) best = dlt; });
+    if(!isFinite(best)) return {msg:'延長先になる境界が見つかりません'};
+    const out = clone(e); if(atEnd) out.a2 = ra(a2 + best); else { out.a1 = ra(normA(a1 - best)); out.a2 = ra(out.a1 + sp + best); }
+    return {repl:[out]};
+  }
+  return {msg:'延長できるのは線・開いたポリライン・円弧です'};
+}
+/* ---- オフセット ---- */
+function lineX(p1, d1, p2, d2){ const den = crs(d1,d2); if(Math.abs(den) < 1e-12) return null; const t = crs(sub(p2,p1), d2)/den; return add(p1, mul(d1,t)); }
+function offsetEnt(e, d, side){
+  if(e.type === 'line'){
+    const a = P(e.x1,e.y1), b = P(e.x2,e.y2), u = unit(sub(b,a)), n = lnorm(u), sg = crs(u, sub(side,a)) >= 0 ? 1 : -1, o = mul(n, d*sg);
+    return Object.assign(clone(e), {x1:rnd(a.x+o.x), y1:rnd(a.y+o.y), x2:rnd(b.x+o.x), y2:rnd(b.y+o.y)});
+  }
+  if(e.type === 'circle' || e.type === 'arc'){
+    const inside = dist(side, P(e.cx,e.cy)) < e.r, r = inside ? e.r - d : e.r + d;
+    if(r <= 1e-6) return null;
+    return Object.assign(clone(e), {r:rnd(r)});
+  }
+  if(e.type === 'pline'){
+    const ps = e.pts.map(q => P(q[0],q[1])), n = ps.length;
+    let sg;
+    if(e.closed){ const A = polyArea(ps), inside = inPoly(side, ps); sg = (inside === (A > 0)) ? 1 : -1; }
+    else { let bi = 0, bd = Infinity; for(let i=0;i<n-1;i++){ const dd = closestD({k:'s',a:ps[i],b:ps[i+1]}, side); if(dd < bd){ bd = dd; bi = i; } } sg = crs(sub(ps[bi+1],ps[bi]), sub(side,ps[bi])) >= 0 ? 1 : -1; }
+    const m = e.closed ? n : n-1, segs = [];
+    for(let i=0;i<m;i++){ const a = ps[i], b = ps[(i+1)%n], u = unit(sub(b,a)), o = mul(lnorm(u), d*sg); segs.push({a:add(a,o), b:add(b,o), u}); }
+    const out = [];
+    for(let i=0;i<n;i++){
+      if(!e.closed && i === 0){ out.push(segs[0].a); continue; }
+      if(!e.closed && i === n-1){ out.push(segs[m-1].b); continue; }
+      const s1 = segs[(i-1+m)%m], s2 = segs[i%m], x = lineX(s1.a, s1.u, s2.a, s2.u);
+      out.push(x || s1.b);
+    }
+    return Object.assign(clone(e), {pts:out.map(q => [rnd(q.x), rnd(q.y)])});
+  }
+  return null;
+}
+/* ---- 変形（移動・回転・鏡像） ---- */
+function mapEnt(e, f, aMap, axisOK, swap, mirror){
+  const o = clone(e), fp = (x,y) => { const q = f(P(x,y)); return [rnd(q.x), rnd(q.y)]; };
+  switch(e.type){
+    case 'line': [o.x1,o.y1] = fp(e.x1,e.y1); [o.x2,o.y2] = fp(e.x2,e.y2); break;
+    case 'pline': o.pts = e.pts.map(q => fp(q[0],q[1])); break;
+    case 'circle': [o.cx,o.cy] = fp(e.cx,e.cy); break;
+    case 'arc': [o.cx,o.cy] = fp(e.cx,e.cy); if(mirror){ const n1 = aMap(e.a1 + span(e)); o.a1 = ra(normA(n1)); o.a2 = ra(normA(n1) + span(e)); } else { o.a1 = ra(normA(aMap(e.a1))); o.a2 = ra(o.a1 + span(e)); } break;
+    case 'text': [o.x,o.y] = fp(e.x,e.y); if(!mirror) o.rot = ra(normS(aMap(e.rot||0))); break;
+    case 'photo': [o.x,o.y] = fp(e.x,e.y); o.a = ra(normS(aMap(e.a))); break;
+    case 'dim': { const lp = f(dimLinePt(e)); setDimFrom(o, f(P(e.x1,e.y1)), f(P(e.x2,e.y2)), lp, axisOK, swap); break; }
+  }
+  return o;
+}
+function moveEnt(e, dx, dy){ return mapEnt(e, p => P(p.x+dx, p.y+dy), a => a, true, false, false); }
+function rotEnt(e, c, a){
+  const co = Math.cos(a), si = Math.sin(a), k = Math.round(a/(PI/2)), axisOK = Math.abs(a - k*PI/2) < 1e-6, swap = Math.abs(k) % 2 === 1;
+  return mapEnt(e, p => { const q = sub(p,c); return P(c.x + q.x*co - q.y*si, c.y + q.x*si + q.y*co); }, t => t + a, axisOK, swap, false);
+}
+function mirEnt(e, a, b){
+  const u = unit(sub(b,a)), phi = ang(u), k = Math.round(phi/(PI/2)), axisOK = Math.abs(phi - k*PI/2) < 1e-6;
+  return mapEnt(e, p => { const q = sub(p,a), t = dot(q,u), f = mul(u,t); return add(a, sub(mul(f,2), q)); }, t => 2*phi - t, axisOK, false, true);
+}
+
+/* ---- グリップ ---- */
+function grips(e){
+  switch(e.type){
+    case 'line': return [{k:'e0', p:P(e.x1,e.y1)}, {k:'e1', p:P(e.x2,e.y2)}, {k:'m', p:P((e.x1+e.x2)/2,(e.y1+e.y2)/2)}];
+    case 'pline': return e.pts.map((q,i) => ({k:'v'+i, p:P(q[0],q[1])}));
+    case 'circle': return [{k:'c', p:P(e.cx,e.cy)}].concat([0,1,2,3].map(i => ({k:'q', p:pol(P(e.cx,e.cy), e.r, i*PI/2)})));
+    case 'arc': { const c = P(e.cx,e.cy), a1 = normA(e.a1), sp = span(e); return [{k:'c', p:c}, {k:'a1', p:pol(c,e.r,a1)}, {k:'a2', p:pol(c,e.r,a1+sp)}, {k:'am', p:pol(c,e.r,a1+sp/2)}]; }
+    case 'text': return [{k:'t', p:P(e.x,e.y)}];
+    case 'dim': { const g = dimGeom(e); return [{k:'d1', p:g.p1}, {k:'d2', p:g.p2}, {k:'dl', p:mul(add(g.A,g.B),0.5)}]; }
+    case 'photo': return [{k:'p', p:P(e.x,e.y)}, {k:'pa', p:pol(P(e.x,e.y), 720, e.a)}];
+  }
+  return [];
+}
+function applyGrip(e, k, p, from){
+  const o = clone(e), q = rp(p);
+  switch(e.type){
+    case 'line': if(k === 'e0'){ o.x1 = q.x; o.y1 = q.y; } else if(k === 'e1'){ o.x2 = q.x; o.y2 = q.y; } else { const d = sub(p, from); return moveEnt(e, d.x, d.y); } break;
+    case 'pline': { const i = +k.slice(1); o.pts[i] = [q.x, q.y]; break; }
+    case 'circle': if(k === 'c'){ o.cx = q.x; o.cy = q.y; } else o.r = rnd(Math.max(1, dist(p, P(e.cx,e.cy)))); break;
+    case 'arc': { const c = P(e.cx,e.cy);
+      if(k === 'c'){ o.cx = q.x; o.cy = q.y; }
+      else if(k === 'am') o.r = rnd(Math.max(1, dist(p,c)));
+      else { const a = normA(ang(sub(p,c))), a1 = normA(e.a1), a2 = a1 + span(e);
+        if(k === 'a1'){ o.a1 = ra(a); o.a2 = ra(a + normA(a2 - a)); } else { o.a1 = ra(a1); o.a2 = ra(a1 + normA(a - a1)); } }
+      break; }
+    case 'text': o.x = q.x; o.y = q.y; break;
+    case 'dim':
+      if(k === 'd1'){ o.x1 = q.x; o.y1 = q.y; } else if(k === 'd2'){ o.x2 = q.x; o.y2 = q.y; }
+      else { if(o.mode === 'h') o.off = q.y; else if(o.mode === 'v') o.off = q.x; else o.off = rnd(dot(sub(p, P(e.x1,e.y1)), lnorm(unit(sub(P(e.x2,e.y2), P(e.x1,e.y1)))))); }
+      break;
+    case 'photo': if(k === 'p'){ o.x = q.x; o.y = q.y; } else o.a = ra(ang(sub(p, P(e.x,e.y)))); break;
+  }
+  return o;
+}
+
+/* ---- 窓選択・交差選択 ---- */
+function segRect(a, b, r){
+  const inside = p => p.x >= r.x0 && p.x <= r.x1 && p.y >= r.y0 && p.y <= r.y1;
+  if(inside(a) || inside(b)) return true;
+  const c = [P(r.x0,r.y0), P(r.x1,r.y0), P(r.x1,r.y1), P(r.x0,r.y1)];
+  for(let i=0;i<4;i++) if(interSS({a,b}, {a:c[i], b:c[(i+1)%4]}).length) return true;
+  return false;
+}
+function entInRect(e, r, crossing){
+  const b = ebox(e);
+  const inside = b.x0 >= r.x0 && b.x1 <= r.x1 && b.y0 >= r.y0 && b.y1 <= r.y1;
+  if(inside) return true;
+  if(!crossing) return false;
+  if(b.x1 < r.x0 || b.x0 > r.x1 || b.y1 < r.y0 || b.y0 > r.y1) return false;
+  if(e.type === 'text' || e.type === 'dim' || e.type === 'photo') return true;
+  for(const pr of prims(e)){
+    if(pr.k === 's'){ if(segRect(pr.a, pr.b, r)) return true; }
+    else { const n = 64, sp = pr.a2 - pr.a1; let prev = pol(pr.c, pr.r, pr.a1); for(let i=1;i<=n;i++){ const cur = pol(pr.c, pr.r, pr.a1 + sp*i/n); if(segRect(prev, cur, r)) return true; prev = cur; } }
+  }
+  return false;
+}
+
+/* ================= 描画 ================= */
+function styleOf(e, k, lit, mode){
+  const L = LBY[e.layer] || LBY.wall;
+  let c = lit ? LIT[L.v] : 'var(' + L.v + ')', w = L.w || 1;
+  let dash = L.dash === 'center' ? [16,4,3,4] : L.dash === 'dot' ? [1.5,4] : null;
+  if(mode === 'sel'){ c = 'var(--selc)'; w = Math.max(w,1.2) + 0.8; dash = [7,4]; }
+  else if(mode === 'hov'){ c = 'var(--selc)'; w = w + 1.8; dash = null; }
+  else if(mode === 'ghost'){ c = 'var(--prev)'; w = 1.2; dash = [6,4]; }
+  return {c, sw:(w*k).toFixed(4), dash:dash ? dash.map(v => (v*k).toFixed(3)).join(' ') : ''};
+}
+function sty(s, fill){ return 'style="stroke:'+s.c+';stroke-width:'+s.sw+';fill:'+(fill||'none')+(s.dash ? ';stroke-dasharray:'+s.dash : '')+'" stroke-linecap="round" stroke-linejoin="round"'; }
+function arcD(e){
+  const c = P(e.cx,e.cy), a1 = normA(e.a1), sp = span(e), s = pol(c,e.r,a1), t = pol(c,e.r,a1+sp);
+  if(sp >= TAU - 1e-9){ const m = pol(c,e.r,a1+PI); return 'M'+s.x+' '+(-s.y)+'A'+e.r+' '+e.r+' 0 1 0 '+m.x+' '+(-m.y)+'A'+e.r+' '+e.r+' 0 1 0 '+s.x+' '+(-s.y); }
+  return 'M'+s.x+' '+(-s.y)+'A'+e.r+' '+e.r+' 0 '+(sp > PI ? 1 : 0)+' 0 '+t.x+' '+(-t.y);
+}
+function entSVG(e, k, lit, mode){
+  const s = styleOf(e, k, lit, mode), S = sty(s);
+  switch(e.type){
+    case 'line': return '<line x1="'+e.x1+'" y1="'+(-e.y1)+'" x2="'+e.x2+'" y2="'+(-e.y2)+'" '+S+'/>';
+    case 'pline': { const pts = e.pts.map(q => q[0]+','+(-q[1])).join(' '); return e.closed ? '<polygon points="'+pts+'" '+S+'/>' : '<polyline points="'+pts+'" '+S+'/>'; }
+    case 'circle': return '<circle cx="'+e.cx+'" cy="'+(-e.cy)+'" r="'+e.r+'" '+S+'/>';
+    case 'arc': return '<path d="'+arcD(e)+'" '+S+'/>';
+    case 'text': {
+      const extra = mode ? ';stroke:'+s.c+';stroke-width:'+(0.6*k).toFixed(3)+';paint-order:stroke' : '';
+      return '<text x="'+e.x+'" y="'+(-e.y)+'" font-size="'+e.h+'" '+FONT+' transform="rotate('+(-deg(e.rot||0)).toFixed(3)+' '+e.x+' '+(-e.y)+')" style="fill:'+s.c+extra+'">'+esc(e.t)+'</text>';
+    }
+    case 'dim': {
+      const g = dimGeom(e), ov = 120, gap = 80; let out = '';
+      [[g.p1,g.A],[g.p2,g.B]].forEach(([p,a]) => { const v = sub(a,p), L = len(v); if(L < 1e-6) return; const u = mul(v,1/L), st0 = L > gap*1.5 ? add(p, mul(u,gap)) : p, en = add(a, mul(u,ov));
+        out += '<line x1="'+st0.x+'" y1="'+(-st0.y)+'" x2="'+en.x+'" y2="'+(-en.y)+'" '+S+'/>'; });
+      out += '<line x1="'+g.A.x+'" y1="'+(-g.A.y)+'" x2="'+g.B.x+'" y2="'+(-g.B.y)+'" '+S+'/>';
+      const w = P(Math.cos(g.th), Math.sin(g.th)), t = mul(P(w.x - w.y, w.x + w.y), 0.7071*110);
+      [g.A, g.B].forEach(a => { out += '<line x1="'+(a.x-t.x)+'" y1="'+(-(a.y-t.y))+'" x2="'+(a.x+t.x)+'" y2="'+(-(a.y+t.y))+'" '+S+'/>'; });
+      const txt = e.ovr ? e.ovr : fmtN(g.val);
+      out += '<text x="'+g.tp.x+'" y="'+(-g.tp.y)+'" font-size="'+DIMH+'" text-anchor="middle" '+FONT+' transform="rotate('+(-deg(g.th)).toFixed(3)+' '+g.tp.x+' '+(-g.tp.y)+')" style="fill:'+s.c+'">'+esc(txt)+'</text>';
+      return '<g>'+out+'</g>';
+    }
+    case 'photo': {
+      const c = P(e.x,e.y), r = 180, dir = P(Math.cos(e.a), Math.sin(e.a)), pr = lnorm(dir);
+      const t0 = add(c, mul(dir,r)), tip = add(c, mul(dir,720)), b = sub(tip, mul(dir,200)), l = add(b, mul(pr,90)), rr = sub(b, mul(pr,90));
+      const pf = lit ? '#FFFFFF' : 'var(--paper)';
+      return '<g><line x1="'+t0.x+'" y1="'+(-t0.y)+'" x2="'+b.x+'" y2="'+(-b.y)+'" '+S+'/><polygon points="'+tip.x+','+(-tip.y)+' '+l.x+','+(-l.y)+' '+rr.x+','+(-rr.y)+'" style="fill:'+s.c+';stroke:none"/>'+
+        '<circle cx="'+c.x+'" cy="'+(-c.y)+'" r="'+r+'" '+sty(s, pf)+'/><text x="'+c.x+'" y="'+(-(c.y-72))+'" font-size="200" text-anchor="middle" '+FONT+' style="fill:'+s.c+'">'+esc(e.n)+'</text></g>';
+    }
+  }
+  return '';
+}
+function paperSVG(k, lit){
+  const pc = lit ? '#FFFFFF' : 'var(--paper)', fc = lit ? '#8C9C95' : 'var(--frame)';
+  return '<rect x="0" y="'+(-PAPER.h)+'" width="'+PAPER.w+'" height="'+PAPER.h+'" style="fill:'+pc+';stroke:'+fc+';stroke-width:'+k+'"/>';
+}
+function titleSVG(k, lit){
+  const fc = lit ? '#8C9C95' : 'var(--frame)', tc = lit ? '#333333' : 'var(--l4)', s = 'style="stroke:'+fc+';stroke-width:'+(1.2*k)+';fill:none"';
+  const x0 = 25000, x1 = 41000, xm = 28500, yT = 4600, yB = 1000, rh = 1200;
+  let o = '<rect x="1000" y="-28700" width="40000" height="27700" '+s+'/><rect x="'+x0+'" y="'+(-yT)+'" width="'+(x1-x0)+'" height="'+(yT-yB)+'" '+s+'/>';
+  o += '<line x1="'+xm+'" y1="'+(-yT)+'" x2="'+xm+'" y2="'+(-yB)+'" '+s+'/>';
+  for(let i=1;i<3;i++) o += '<line x1="'+x0+'" y1="'+(-(yT-rh*i))+'" x2="'+x1+'" y2="'+(-(yT-rh*i))+'" '+s+'/>';
+  [['件名','図面練習（平面図）'],['縮尺','1/100（A3）'],['作成','']].forEach((r,i) => {
+    const y = -(yT - rh*i - 820);
+    o += '<text x="'+(x0+350)+'" y="'+y+'" font-size="380" '+FONT+' style="fill:'+tc+'">'+r[0]+'</text><text x="'+(xm+400)+'" y="'+y+'" font-size="420" '+FONT+' style="fill:'+tc+'">'+r[1]+'</text>';
+  });
+  return o;
+}
+function renderStatic(){
+  const k = 1/view.s;
+  gPaper.innerHTML = paperSVG(k, false);
+  gTitle.innerHTML = titleSVG(k, false);
+  const g = +st.grid, gr = $('#gridRect');
+  if(g && g*view.s >= 8){ gr.style.display = ''; const pat = $('#gp'); pat.setAttribute('width', g); pat.setAttribute('height', g); $('#gpc').setAttribute('r', (1.4*k).toFixed(3)); }
+  else gr.style.display = 'none';
+}
+function renderEnts(){ const k = 1/view.s; gEnt.innerHTML = doc.ents.filter(visible).map(e => entSVG(e, k, false, null)).join(''); }
+function renderOverlays(){
+  const k = 1/view.s; let h = '', gh = '';
+  const ids = Array.from(sel).filter(id => ent(id));
+  ids.forEach(id => { const e = ent(id); h += entSVG(e, k, false, 'sel'); });
+  if(ids.length && ids.length <= 30){
+    const m = 5*k;
+    ids.forEach(id => grips(ent(id)).forEach(g => { gh += '<rect x="'+(g.p.x-m)+'" y="'+(-g.p.y-m)+'" width="'+(2*m)+'" height="'+(2*m)+'" style="fill:var(--grip);stroke:var(--paper);stroke-width:'+k+'"/>'; }));
+  }
+  gSel.innerHTML = h + gh;
+  const he = hoverId != null && !sel.has(hoverId) ? ent(hoverId) : null;
+  gHov.innerHTML = he ? entSVG(he, k, false, 'hov') : '';
+}
+/* ================= 表示範囲 ================= */
+function clampS(s){ return Math.max(0.003, Math.min(4, s)); }
+function toWorld(sx, sy){ return P(view.cx + (sx - W()/2)/view.s, view.cy - (sy - H()/2)/view.s); }
+function toScreen(p){ return P((p.x - view.cx)*view.s + W()/2, -(p.y - view.cy)*view.s + H()/2); }
+function evXY(e){ const r = svg.getBoundingClientRect(); return P(e.clientX - r.left, e.clientY - r.top); }
+function applyView(){
+  const w = W(), h = H();
+  svg.setAttribute('viewBox', (view.cx - w/2/view.s)+' '+(-view.cy - h/2/view.s)+' '+(w/view.s)+' '+(h/view.s));
+  renderStatic(); renderEnts(); renderOverlays(); if(typeof renderPrev === 'function') renderPrev();
+}
+function zoomAt(sx, sy, f){
+  const wp = toWorld(sx, sy), ns = clampS(view.s*f);
+  view.s = ns; view.cx = wp.x - (sx - W()/2)/ns; view.cy = wp.y + (sy - H()/2)/ns;
+  ev.zoom++; applyView(); schedTut();
+}
+function allBox(){
+  const vs = doc.ents.filter(visible); if(!vs.length) return null;
+  const bs = vs.map(ebox);
+  return {x0:Math.min(...bs.map(b => b.x0)), y0:Math.min(...bs.map(b => b.y0)), x1:Math.max(...bs.map(b => b.x1)), y1:Math.max(...bs.map(b => b.y1))};
+}
+function insets(){
+  const lb = document.getElementById('lesBar'), kb = document.getElementById('keypad');
+  let bot = 12; if(lb && !lb.hidden) bot = Math.max(bot, lb.offsetHeight + 18);
+  return {l:12, r:60, t:48, b:bot};
+}
+function fitAll(silent){
+  const b = allBox(), w = W(), h = H(), m = insets(), uw = Math.max(80, w - m.l - m.r), uh = Math.max(80, h - m.t - m.b);
+  const cxs = m.l + uw/2, cys = m.t + uh/2;
+  let mid, s;
+  if(!b){ mid = P(9000, 9000); s = clampS(uw/16000); }
+  else { const bw = Math.max(b.x1-b.x0, 2500), bh = Math.max(b.y1-b.y0, 2500); s = clampS(Math.min(uw/(bw*1.12), uh/(bh*1.12))); mid = P((b.x0+b.x1)/2, (b.y0+b.y1)/2); }
+  view.s = s; view.cx = mid.x - (cxs - w/2)/s; view.cy = mid.y + (cys - h/2)/s;
+  view.init = true; if(!silent) ev.fit++; applyView(); if(!silent) schedTut();
+}
+function fitPaper(){ view.s = clampS(Math.min(W()/(PAPER.w*1.05), H()/(PAPER.h*1.05))); view.cx = PAPER.w/2; view.cy = PAPER.h/2; ev.fit++; applyView(); schedTut(); }
+
+/* ================= 履歴 ================= */
+function commit(fn, keepSel){
+  undoS.push(JSON.stringify(doc)); if(undoS.length > 200) undoS.shift(); redoS = [];
+  fn();
+  if(!keepSel) sel.forEach(id => { if(!ent(id)) sel.delete(id); });
+  save(); renderEnts(); renderOverlays(); updateUndo(); renderProps(); renderLayers(); schedTut();
+}
+function doUndo(){ if(!undoS.length) return toast('これ以上戻せません'); redoS.push(JSON.stringify(doc)); doc = JSON.parse(undoS.pop()); ev.undo++; afterHist(); }
+function doRedo(){ if(!redoS.length) return toast('やり直す操作がありません'); undoS.push(JSON.stringify(doc)); doc = JSON.parse(redoS.pop()); afterHist(); }
+function afterHist(){ sel.forEach(id => { if(!ent(id)) sel.delete(id); }); save(); renderEnts(); renderOverlays(); updateUndo(); renderProps(); renderLayers(); if(typeof renderPrev === 'function') renderPrev(); schedTut(); }
+function updateUndo(){ $('#bUndo').disabled = !undoS.length; $('#bRedo').disabled = !redoS.length; }
+function addEnt(e, layer){
+  const L = layer || e.layer || st.layer;
+  if(st.lay[L] && !st.lay[L].vis){ st.lay[L].vis = true; toast('「'+LBY[L].name+'」レイヤが非表示だったので表示にしました'); }
+  commit(() => { e.id = doc.next++; e.layer = L; doc.ents.push(e); });
+  return e;
+}
+function replaceEnt(id, list){
+  const i = doc.ents.findIndex(e => e.id === id); if(i < 0) return;
+  /* 先頭の図形は元のIDを引き継ぎ、残りには新しいIDを振る */
+  const out = list.map((e, j) => { if(j === 0 && e.id === id) return e; e.id = doc.next++; return e; });
+  doc.ents.splice(i, 1, ...out);
+}
+
+/* ================= トースト ================= */
+let toastT = null;
+function toast(t, ms){ const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), ms || 3200); }
+
+/* ================= スナップと点の決定 ================= */
+let C = null, lastCmd = null, hv = null, winSel = null, lastResult = '';
+function askBase(){ return C && C.ask && !C.ask.noTrack ? C.ask.base : null; }
+function findSnap(raw, tolPx, base, force){
+  const tol = tolPx/view.s, os = force ? {end:1,mid:1,int:1,cen:1,per:0,nea:0} : st.os;
+  const cands = [], nearP = [];
+  doc.ents.forEach(e => {
+    if(!visible(e)) return;
+    const b = ebox(e);
+    if(raw.x < b.x0 - tol || raw.x > b.x1 + tol || raw.y < b.y0 - tol || raw.y > b.y1 + tol) return;
+    if(e.type === 'line'){ if(os.end) cands.push({p:P(e.x1,e.y1), k:'end'}, {p:P(e.x2,e.y2), k:'end'}); if(os.mid) cands.push({p:P((e.x1+e.x2)/2,(e.y1+e.y2)/2), k:'mid'}); }
+    else if(e.type === 'pline'){ if(os.end) e.pts.forEach(q => cands.push({p:P(q[0],q[1]), k:'end'})); if(os.mid) prims(e).forEach(s => cands.push({p:mul(add(s.a,s.b),0.5), k:'mid'})); }
+    else if(e.type === 'arc'){ const pr = prims(e)[0]; if(os.end) cands.push({p:pol(pr.c,pr.r,pr.a1), k:'end'}, {p:pol(pr.c,pr.r,pr.a2), k:'end'}); if(os.mid) cands.push({p:pol(pr.c,pr.r,(pr.a1+pr.a2)/2), k:'mid'}); }
+    if((e.type === 'circle' || e.type === 'arc') && os.cen){ const c = P(e.cx,e.cy), onEdge = Math.abs(dist(raw,c) - e.r) < tol; if(dist(raw,c) < tol || onEdge) cands.push({p:c, k:'cen', edge:onEdge}); }
+    if((e.type === 'text' || e.type === 'photo') && os.end) cands.push({p:P(e.x,e.y), k:'ins'});
+    prims(e).forEach(pr => { if(closestD(pr, raw) < tol) nearP.push({pr, e}); });
+  });
+  if(C && C.d && Array.isArray(C.d.pts) && os.end) C.d.pts.forEach(p => cands.push({p, k:'end'}));
+  if(os.int && nearP.length > 1){
+    for(let i=0;i<nearP.length;i++) for(let j=i+1;j<nearP.length;j++) interPrim(nearP[i].pr, nearP[j].pr).forEach(p => cands.push({p, k:'int'}));
+  }
+  let best = null, bd = tol;
+  cands.forEach(c => { let d = dist(raw, c.p); if(c.k === 'cen' && c.edge) d = Math.min(d, tol*0.7); if(d < bd){ bd = d; best = c; } });
+  if(best) return best;
+  if(os.per && base){
+    let bp = null, bdd = Infinity;
+    nearP.forEach(n => {
+      let f;
+      if(n.pr.k === 's'){ const d = sub(n.pr.b,n.pr.a), L2 = dot(d,d); if(L2 < 1e-9) return; const t = dot(sub(base,n.pr.a),d)/L2; if(t < -1e-9 || t > 1+1e-9) return; f = add(n.pr.a, mul(d,t)); }
+      else { const v = sub(base, n.pr.c); if(len(v) < 1e-9) return; f = add(n.pr.c, mul(unit(v), n.pr.r)); if(!onArc(n.pr, ang(sub(f,n.pr.c)))) return; }
+      if(dist(f, base) < 1e-6) return;
+      const dd = dist(raw, f); if(dd < bdd){ bdd = dd; bp = f; }
+    });
+    if(bp && bdd < tol*6) return {p:bp, k:'per'};
+  }
+  if(os.nea && nearP.length){ let bp = null, bdd = Infinity; nearP.forEach(n => { const q = closestPrim(n.pr, raw), d = dist(q, raw); if(d < bdd){ bdd = d; bp = q; } }); if(bp) return {p:bp, k:'nea'}; }
+  return null;
+}
+function resolve(sp, o){
+  o = o || {};
+  const raw = toWorld(sp.x, sp.y), base = askBase(), noSnap = C && C.ask && C.ask.noSnap;
+  const tolPx = o.touch ? 24 : 12;
+  if(!noSnap && (st.osOn || o.force)){ const s = findSnap(raw, o.force ? tolPx*1.6 : tolPx, base, o.force); if(s) return {p:s.p, snap:s, raw, sx:sp.x, sy:sp.y}; }
+  if(o.force){ toast('近くに読み取れる点がありません'); return null; }
+  let p = raw, track = null;
+  if(st.gridSnap && +st.grid) { const g = +st.grid; p = P(Math.round(p.x/g)*g, Math.round(p.y/g)*g); }
+  if(base){
+    const v = sub(p, base), L = len(v);
+    if(L > 1e-9){
+      if(st.ortho){ const hz = Math.abs(v.x) >= Math.abs(v.y); p = hz ? P(p.x, base.y) : P(base.x, p.y); track = {a: hz ? (v.x >= 0 ? 0 : PI) : (v.y >= 0 ? PI/2 : -PI/2)}; }
+      else if(st.polar){ const inc = st.polarInc*PI/180, a = ang(v), aa = Math.round(a/inc)*inc;
+        if(Math.abs(normS(a - aa)) < 3.5*PI/180){ const u = P(Math.cos(aa), Math.sin(aa)); p = add(base, mul(u, dot(v,u))); track = {a:aa}; } }
+    }
+  }
+  return {p, snap:null, track, raw, sx:sp.x, sy:sp.y};
+}
+function curDir(base){ if(hv && hv.p && dist(hv.p, base) > 1e-6) return unit(sub(hv.p, base)); return P(1,0); }
+function toHalf(s){ return s.replace(/[０-９．，－＠＃＜]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0)).replace(/、/g, ',').replace(/\s+/g, ''); }
+function parsePoint(str, base){
+  let s = toHalf(str), abs = false, rel = false;
+  if(s[0] === '#'){ abs = true; s = s.slice(1); } else if(s[0] === '@'){ rel = true; s = s.slice(1); }
+  if(!base){ rel = false; } else if(!abs) rel = true;
+  const num = '(-?\\d+(?:\\.\\d+)?|-?\\.\\d+)';
+  let m;
+  if((m = s.match(new RegExp('^'+num+'<'+num+'$')))){ const L = +m[1], a = (+m[2])*PI/180, o = rel ? base : P(0,0); return add(o, P(L*Math.cos(a), L*Math.sin(a))); }
+  if((m = s.match(new RegExp('^'+num+','+num+'$')))){ const x = +m[1], y = +m[2]; return rel ? add(base, P(x,y)) : P(x,y); }
+  if((m = s.match(new RegExp('^'+num+'$'))) && base){ return add(base, mul(curDir(base), +m[1])); }
+  return null;
+}
+
+/* ================= プロンプト・プレビュー ================= */
+function ask(kind, msg, o){ if(!C) return; C.ask = Object.assign({kind, msg}, o || {}); renderPrompt(); renderPrev(); autoKP(); }
+function acceptsPoint(){ return C && C.ask && (C.ask.kind === 'point' || (C.ask.kind === 'number' && C.ask.pointOK)); }
+function renderPrompt(){
+  const pr = $('#prompt');
+  if(!C){ pr.innerHTML = '<b>待機中</b>' + (sel.size ? sel.size+'個を選択中。左の「修正」から操作を選べます（Deleteで削除）' : '左のツールを選ぶか、コマンドを入力（L＝線　REC＝矩形　など）'); renderOpts([]); }
+  else { pr.innerHTML = '<b>'+esc(C.def.label)+'</b>'+esc(C.ask ? C.ask.msg : ''); renderOpts((C.ask && C.ask.opts) || []); }
+  $$('.tool').forEach(b => b.setAttribute('aria-pressed', C && b.dataset.c === C.name ? 'true' : 'false'));
+  const cmd = $('#cmd');
+  cmd.placeholder = C && C.ask ? ({point:'座標・距離', number:'数値', text:'文字を入力', pick:'（図形をクリック）', select:'（図形を選択）', opt:'（上のボタン）'}[C.ask.kind] || '入力') : 'コマンド';
+}
+function renderOpts(opts){ $('#optbar').innerHTML = opts.map(o => '<button data-k="'+esc(o.key)+'" class="'+(o.on ? 'on' : '')+'">'+esc(o.label)+'</button>').join(''); }
+function ghostEnt(e, k){ return entSVG(e, k, false, 'ghost'); }
+function gl(k){ return 'style="stroke:var(--prev);stroke-width:'+(1.3*k).toFixed(3)+';fill:none;stroke-dasharray:'+(6*k).toFixed(2)+' '+(4*k).toFixed(2)+'"'; }
+function lineGhost(a, b, k){ return '<line x1="'+a.x+'" y1="'+(-a.y)+'" x2="'+b.x+'" y2="'+(-b.y)+'" '+gl(k)+'/>'; }
+function polyGhost(ps, k, closed){ const s = ps.map(q => q.x+','+(-q.y)).join(' '); return closed ? '<polygon points="'+s+'" '+gl(k)+'/>' : '<polyline points="'+s+'" '+gl(k)+'/>'; }
+function rectGhost(a, b, k){ return polyGhost([a, P(b.x,a.y), b, P(a.x,b.y)], k, true); }
+function selGhost(fn, k){ return Array.from(sel).filter(id => ent(id)).map(id => ghostEnt(fn(ent(id)), k)).join(''); }
+function snapGlyph(s, k){
+  const p = s.p, m = 7*k, x = p.x, y = -p.y, st_ = 'style="stroke:var(--snap);stroke-width:'+(2.2*k).toFixed(3)+';fill:none"';
+  switch(s.k){
+    case 'end': return '<rect x="'+(x-m)+'" y="'+(y-m)+'" width="'+(2*m)+'" height="'+(2*m)+'" '+st_+'/>';
+    case 'mid': return '<polygon points="'+x+','+(y-m*1.1)+' '+(x+m)+','+(y+m*0.8)+' '+(x-m)+','+(y+m*0.8)+'" '+st_+'/>';
+    case 'int': return '<path d="M'+(x-m)+' '+(y-m)+'L'+(x+m)+' '+(y+m)+'M'+(x+m)+' '+(y-m)+'L'+(x-m)+' '+(y+m)+'" '+st_+'/>';
+    case 'cen': return '<circle cx="'+x+'" cy="'+y+'" r="'+m+'" '+st_+'/>';
+    case 'per': return '<path d="M'+(x-m)+' '+(y+m)+'H'+(x+m)+'M'+(x-m)+' '+(y+m)+'V'+(y-m)+'M'+(x-m)+' '+y+'H'+x+'V'+(y+m)+'" '+st_+'/>';
+    case 'nea': return '<path d="M'+(x-m)+' '+(y-m)+'H'+(x+m)+'L'+(x-m)+' '+(y+m)+'H'+(x+m)+'Z" '+st_+'/>';
+    default: return '<rect x="'+(x-m)+'" y="'+(y-m)+'" width="'+(2*m)+'" height="'+(2*m)+'" '+st_+'/><path d="M'+(x-m*0.5)+' '+y+'H'+(x+m*0.5)+'M'+x+' '+(y-m*0.5)+'V'+(y+m*0.5)+'" '+st_+'/>';
+  }
+}
+function crossGlyph(p, k){ const m = 10*k; return '<path d="M'+(p.x-m)+' '+(-p.y)+'H'+(p.x+m)+'M'+p.x+' '+(-p.y-m)+'V'+(-p.y+m)+'" style="stroke:var(--prev);stroke-width:'+(1.2*k).toFixed(3)+'"/>'; }
+function trackSVG(b, a, k){ const L = (W()+H())/view.s, e = add(b, mul(P(Math.cos(a),Math.sin(a)), L)); return '<line x1="'+b.x+'" y1="'+(-b.y)+'" x2="'+e.x+'" y2="'+(-e.y)+'" style="stroke:var(--track);stroke-width:'+(1*k).toFixed(3)+';stroke-dasharray:'+(2*k).toFixed(2)+' '+(5*k).toFixed(2)+'"/>'; }
+function winSVG(w, k){
+  const a = toWorld(w.a.x, w.a.y), b = toWorld(w.b.x, w.b.y), cr = w.b.x < w.a.x;
+  const x = Math.min(a.x,b.x), y = Math.min(a.y,b.y), ww = Math.abs(a.x-b.x), hh = Math.abs(a.y-b.y);
+  return '<rect x="'+x+'" y="'+(-(y+hh))+'" width="'+ww+'" height="'+hh+'" style="fill:'+(cr ? 'rgba(46,158,98,.12)' : 'rgba(31,111,209,.12)')+';stroke:'+(cr ? 'var(--track)' : 'var(--selc)')+';stroke-width:'+(1.2*k).toFixed(3)+(cr ? ';stroke-dasharray:'+(6*k)+' '+(4*k) : '')+'"/>';
+}
+function renderPrev(){
+  const k = 1/view.s; let h = '';
+  if(C && C.def.preview && hv && hv.p){ try{ h += C.def.preview(C, hv.p, k) || ''; }catch(err){} }
+  if(hv && hv.p && acceptsPoint()){
+    if(hv.track && askBase()) h += trackSVG(askBase(), hv.track.a, k);
+    h += hv.snap ? snapGlyph(hv.snap, k) : crossGlyph(hv.p, k);
+  }
+  if(winSel) h += winSVG(winSel, k);
+  gPrev.innerHTML = h;
+  updateTip();
+}
+function updateTip(){
+  const tip = $('#tip'), cmd = $('#cmd').value;
+  if(!hv || hv.sx == null){ tip.hidden = true; return; }
+  const lines = [];
+  if(hv.snap && acceptsPoint()) lines.push('<b>'+OSN[hv.snap.k]+'</b>');
+  if(C && C.def.tip && hv.p){ const t = C.def.tip(C, hv.p); if(t) lines.push(esc(t)); }
+  else if(acceptsPoint() && C.ask.base && hv.p){ const d = sub(hv.p, C.ask.base); lines.push('長さ '+fmtN(len(d))+'　角度 '+fmtA(ang(d))); }
+  if(hv.track && acceptsPoint() && !hv.snap) lines.push(st.ortho ? '直交' : '極 '+fmtA(hv.track.a));
+  if(cmd) lines.push('入力：'+esc(cmd));
+  if(!lines.length){ tip.hidden = true; return; }
+  tip.innerHTML = lines.join('<br>'); tip.hidden = false;
+  const touchLift = hv.touch ? -150 : 0;
+  let x = hv.sx + 18, y = hv.sy + 18 + touchLift;
+  if(x > W() - 160) x = hv.sx - 170; if(y < 4) y = 4; if(y > H() - 60) y = hv.sy - 60;
+  tip.style.left = x+'px'; tip.style.top = y+'px';
+  $('#coord').textContent = hv.p ? 'X '+fmtN(hv.p.x)+'　Y '+fmtN(hv.p.y) : '';
+}
+
+/* ================= コマンド ================= */
+const CMD = {};
+function startCmd(name){
+  if(name === 'UNDO'){ doUndo(); return; }
+  if(name === 'REDO'){ doRedo(); return; }
+  const def = CMD[name]; if(!def){ toast('コマンドが見つかりません'); return; }
+  if(C) cancelCmd(true);
+  C = {name, def, d:{}, ask:null};
+  if(name !== 'GRIP') lastCmd = name;
+  ev.start[name] = (ev.start[name] || 0) + 1;
+  showKP(false, true);
+  def.start(C);
+  renderPrompt(); renderPrev(); schedTut();
+}
+function endCmd(){ const n = C && C.name; C = null; winSel = null; renderPrompt(); renderPrev(); if(n){ ev.done[n] = (ev.done[n] || 0) + 1; } autoKP(); schedTut(); }
+function cancelCmd(silent){ if(!C) return; C = null; winSel = null; renderPrompt(); renderPrev(); autoKP(); if(!silent) toast('取り消しました'); schedTut(); }
+function needSel(c, then, msg){
+  if(sel.size){ then(); return; }
+  c.d.then = then;
+  ask('select', msg || '対象の図形を選んで「選択完了」（Enter）', {opts:[{key:'SELDONE', label:'選択完了'}]});
+}
+function selDone(){
+  if(!C) return;
+  if(!sel.size){ toast('まだ何も選ばれていません。図形をタップ、または囲んで選びます'); return; }
+  const t = C.d.then; C.d.then = null; if(t) t();
+}
+function showResult(html){ lastResult = html; renderProps(); toast(html.replace(/<br>/g,'　').replace(/<[^>]+>/g,''), 6000); }
+function ensureVis(L){ if(st.lay[L] && !st.lay[L].vis){ st.lay[L].vis = true; renderLayers(); } }
+
+CMD.LINE = {label:'線',
+  start(c){ c.d.pts = []; ask('point','始点を指定'); },
+  point(c,p){ const d = c.d; if(!d.pts.length){ d.pts.push(p); this.next(c); return; }
+    const a = d.pts[d.pts.length-1]; if(dist(a,p) < 1e-6) return;
+    addEnt({type:'line', x1:rnd(a.x), y1:rnd(a.y), x2:rnd(p.x), y2:rnd(p.y)}); d.pts.push(p); this.next(c); },
+  next(c){ const n = c.d.pts.length, o = []; if(n >= 3) o.push({key:'C', label:'閉じる'}); if(n >= 2) o.push({key:'U', label:'1つ戻す'}); o.push({key:'END', label:'終了（Enter）'});
+    ask('point', n === 1 ? '次の点を指定（長さの数値・座標の入力も可）' : '次の点を指定（Enterで終了）', {base:c.d.pts[n-1], opts:o}); },
+  opt(c,k){ const d = c.d;
+    if(k === 'END') return endCmd();
+    if(k === 'C' && d.pts.length >= 3){ const a = d.pts[d.pts.length-1], b = d.pts[0]; addEnt({type:'line', x1:rnd(a.x), y1:rnd(a.y), x2:rnd(b.x), y2:rnd(b.y)}); endCmd(); }
+    else if(k === 'U' && d.pts.length >= 2){ doUndo(); d.pts.pop(); this.next(c); } },
+  enter(){ endCmd(); },
+  preview(c,p,k){ const d = c.d; return d.pts.length ? lineGhost(d.pts[d.pts.length-1], p, k) : ''; }
+};
+function plineDef(label, layer, after){
+  return {label,
+    start(c){ c.d.pts = []; ask('point','始点を指定'); },
+    point(c,p){ const ps = c.d.pts; if(ps.length && dist(ps[ps.length-1],p) < 1e-6) return; ps.push(p); this.next(c); },
+    next(c){ const n = c.d.pts.length; if(!n) return ask('point','始点を指定');
+      const o = []; if(n >= 3) o.push({key:'C', label:'閉じる'}); if(n >= 2) o.push({key:'U', label:'1つ戻す'}); if(n >= 2) o.push({key:'END', label:'確定（Enter）'});
+      ask('point', '次の点を指定' + (n >= 2 ? '（Enterで確定）' : ''), {base:c.d.pts[n-1], opts:o}); },
+    finish(c, closed){ const ps = c.d.pts; if(ps.length < 2){ toast('2点以上必要です'); return; }
+      if(layer) ensureVis(layer);
+      addEnt({type:'pline', closed:!!closed && ps.length >= 3, pts:ps.map(q => [rnd(q.x), rnd(q.y)])}, layer);
+      if(after) toast(after); endCmd(); },
+    opt(c,k){ if(k === 'C') this.finish(c, true); else if(k === 'U'){ c.d.pts.pop(); this.next(c); } else if(k === 'END') this.finish(c, false); },
+    enter(c){ if(c.d.pts.length >= 2) this.finish(c, false); else endCmd(); },
+    preview(c,p,k){ const ps = c.d.pts; return ps.length ? polyGhost(ps.concat([p]), k) : ''; }
+  };
+}
+CMD.PLINE = plineDef('ポリライン', null, null);
+CMD.DMG = plineDef('損傷線', 'dmg', '損傷線を描きました（「5 損傷」レイヤ）。注記は「文字」で書きます');
+CMD.RECT = {label:'矩形',
+  start(c){ ask('point','1つ目の角を指定'); },
+  point(c,p){ const d = c.d;
+    if(!d.a){ d.a = p; ask('point','もう1つの角を指定（例：3640,2730）', {base:p, noTrack:true, opts:[{key:'D', label:'寸法で指定'}]}); return; }
+    if(d.w){ const sx = p.x >= d.a.x ? 1 : -1, sy = p.y >= d.a.y ? 1 : -1; this.make(c, P(d.a.x + sx*d.w, d.a.y + sy*d.h)); return; }
+    this.make(c, p); },
+  make(c,b){ const a = c.d.a;
+    if(Math.abs(b.x-a.x) < 1e-6 || Math.abs(b.y-a.y) < 1e-6){ toast('幅と高さが0にならないように指定してください'); return; }
+    const x0 = Math.min(a.x,b.x), x1 = Math.max(a.x,b.x), y0 = Math.min(a.y,b.y), y1 = Math.max(a.y,b.y);
+    addEnt({type:'pline', closed:true, pts:[[x0,y0],[x1,y0],[x1,y1],[x0,y1]].map(q => [rnd(q[0]), rnd(q[1])])});
+    toast('矩形 '+fmtN(x1-x0)+' × '+fmtN(y1-y0)+' を描きました'); endCmd(); },
+  opt(c,k){ if(k === 'D'){ c.d.step = 'w'; ask('number','幅を入力（mm）'); } },
+  number(c,v){ if(!(v > 0)) return toast('0より大きい数値を入れてください');
+    if(c.d.step === 'w'){ c.d.tw = v; c.d.step = 'h'; ask('number','高さを入力（mm）'); }
+    else if(c.d.step === 'h'){ c.d.w = c.d.tw; c.d.h = v; c.d.step = null; ask('point','置く向きをクリック（1つ目の角から見た方向）', {base:c.d.a, noTrack:true}); } },
+  preview(c,p,k){ const d = c.d; if(!d.a) return ''; let b = p; if(d.w){ const sx = p.x >= d.a.x ? 1 : -1, sy = p.y >= d.a.y ? 1 : -1; b = P(d.a.x + sx*d.w, d.a.y + sy*d.h); } return rectGhost(d.a, b, k); },
+  tip(c,p){ const d = c.d; if(!d.a) return ''; if(d.w) return fmtN(d.w)+' × '+fmtN(d.h); return fmtN(Math.abs(p.x-d.a.x))+' × '+fmtN(Math.abs(p.y-d.a.y)); }
+};
+CMD.CIRCLE = {label:'円',
+  start(c){ ask('point','中心を指定'); },
+  point(c,p){ if(!c.d.c){ c.d.c = p; c.d.dia = false; this.askR(c); return; } this.make(c, dist(c.d.c,p)*(c.d.dia ? 0.5 : 1)); },
+  askR(c){ ask('number', c.d.dia ? '直径を数値で入力、または点を指定' : '半径を数値で入力、または点を指定', {base:c.d.c, pointOK:true, noTrack:true, opts:[{key:'D', label:c.d.dia ? '半径で指定する' : '直径で指定する'}]}); },
+  number(c,v){ if(!(v > 0)) return toast('0より大きい数値を入れてください'); this.make(c, c.d.dia ? v/2 : v); },
+  opt(c,k){ if(k === 'D'){ c.d.dia = !c.d.dia; this.askR(c); } },
+  make(c,r){ if(r < 1e-6) return; addEnt({type:'circle', cx:rnd(c.d.c.x), cy:rnd(c.d.c.y), r:rnd(r)}); toast('円（半径 '+fmtN(r)+'）を描きました'); endCmd(); },
+  preview(c,p,k){ if(!c.d.c) return ''; const r = dist(c.d.c,p)*(c.d.dia ? 0.5 : 1); return ghostEnt({type:'circle', layer:st.layer, cx:c.d.c.x, cy:c.d.c.y, r:Math.max(r,1e-6)}, k) + lineGhost(c.d.c, p, k); },
+  tip(c,p){ if(!c.d.c) return ''; const r = dist(c.d.c,p); return c.d.dia ? '直径 '+fmtN(r) : '半径 '+fmtN(r); }
+};
+CMD.ARC = {label:'円弧',
+  start(c){ c.d.rev = false; ask('point','中心を指定'); },
+  point(c,p){ const d = c.d;
+    if(!d.c){ d.c = p; ask('point','始点を指定（中心からの距離が半径）', {base:p}); return; }
+    if(!d.s){ if(dist(d.c,p) < 1e-6) return; d.s = p; ask('point','終点の方向を指定（反時計回り）', {base:d.c, noTrack:true, opts:[{key:'R', label:'向きを反対にする'}]}); return; }
+    this.make(c,p); },
+  geo(c,p){ const d = c.d, r = dist(d.c,d.s); let a1 = ang(sub(d.s,d.c)), a2 = ang(sub(p,d.c)); if(d.rev){ const t = a1; a1 = a2; a2 = t; } return {r, a1:normA(a1), a2:normA(a1) + normA(a2 - a1)}; },
+  make(c,p){ const g = this.geo(c,p); if(normA(g.a2 - g.a1) < 1e-6) return; addEnt({type:'arc', cx:rnd(c.d.c.x), cy:rnd(c.d.c.y), r:rnd(g.r), a1:ra(g.a1), a2:ra(g.a2)}); endCmd(); },
+  opt(c,k){ if(k === 'R'){ c.d.rev = !c.d.rev; renderPrev(); toast(c.d.rev ? '時計回りに描きます' : '反時計回りに描きます'); } },
+  preview(c,p,k){ const d = c.d; if(!d.c) return ''; if(!d.s) return lineGhost(d.c, p, k); const g = this.geo(c,p); return ghostEnt({type:'arc', layer:st.layer, cx:d.c.x, cy:d.c.y, r:g.r, a1:g.a1, a2:g.a2}, k) + lineGhost(d.c, p, k); },
+  tip(c,p){ const d = c.d; if(d.c && !d.s) return '半径 '+fmtN(dist(d.c,p)); if(d.s){ const g = this.geo(c,p); return '中心角 '+fmtA(g.a2 - g.a1); } return ''; }
+};
+CMD.TEXT = {label:'文字',
+  start(c){ ask('point','文字を置く位置（文字の左下）を指定'); },
+  hopts(){ return [250,350,500].map(h => ({key:'H'+h, label:'高さ '+(h/100)+'mm', on:st.th === h})); },
+  point(c,p){ c.d.p = p; ask('text','文字を入力して確定（Enter）', {opts:this.hopts()}); },
+  opt(c,k){ if(k[0] === 'H'){ st.th = +k.slice(1); save(); ask('text','文字を入力して確定（Enter）', {opts:this.hopts()}); } },
+  text(c,s){ addEnt({type:'text', x:rnd(c.d.p.x), y:rnd(c.d.p.y), t:s, h:st.th, rot:0}); endCmd(); },
+  enter(){ endCmd(); },
+  preview(c,p,k){ const q = c.d.p || p; return '<text x="'+q.x+'" y="'+(-q.y)+'" font-size="'+st.th+'" '+FONT+' style="fill:var(--prev);opacity:.7">'+esc($('#cmd').value || '文字')+'</text>'; }
+};
+function autoMode(p1, p2, p){
+  const x0 = Math.min(p1.x,p2.x), x1 = Math.max(p1.x,p2.x), y0 = Math.min(p1.y,p2.y), y1 = Math.max(p1.y,p2.y);
+  const ex = p.x < x0 ? x0 - p.x : p.x > x1 ? p.x - x1 : 0, ey = p.y < y0 ? y0 - p.y : p.y > y1 ? p.y - y1 : 0;
+  if(ey > 0 && ex === 0) return 'h'; if(ex > 0 && ey === 0) return 'v'; if(ex > 0 && ey > 0) return ey >= ex ? 'h' : 'v';
+  return (x1 - x0) >= (y1 - y0) ? 'h' : 'v';
+}
+CMD.DIM = {label:'寸法',
+  mopts(){ return [['auto','自動'],['h','水平'],['v','垂直'],['a','平行']].map(([k,l]) => ({key:'M'+k, label:l, on:st.dimMode === k})); },
+  start(c){ ask('point','1点目を指定（測りたい所の端）', {opts:this.mopts()}); },
+  point(c,p){ const d = c.d;
+    if(!d.p1){ d.p1 = p; ask('point','2点目を指定', {base:p, opts:this.mopts()}); return; }
+    if(!d.p2){ if(dist(d.p1,p) < 1e-6) return; d.p2 = p; ask('point','寸法線を置く位置を指定', {noTrack:true, opts:this.mopts()}); return; }
+    const e = this.make(c,p), L = st.dimAuto === false ? null : 'dim'; if(L) ensureVis(L);
+    addEnt(e, L); toast('寸法 '+fmtN(dimGeom(e).val)+' を入れました'); endCmd(); },
+  make(c,p){ const d = c.d; let m = st.dimMode; if(m === 'auto') m = autoMode(d.p1, d.p2, p);
+    const e = {type:'dim', x1:rnd(d.p1.x), y1:rnd(d.p1.y), x2:rnd(d.p2.x), y2:rnd(d.p2.y), mode:m, off:0, ovr:''};
+    if(m === 'h') e.off = rnd(p.y); else if(m === 'v') e.off = rnd(p.x); else e.off = rnd(dot(sub(p,d.p1), lnorm(unit(sub(d.p2,d.p1)))));
+    return e; },
+  opt(c,k){ st.dimMode = k.slice(1); save(); C.ask.opts = this.mopts(); renderPrompt(); renderPrev(); },
+  preview(c,p,k){ const d = c.d; if(d.p1 && !d.p2) return lineGhost(d.p1, p, k); if(d.p2){ const e = this.make(c,p); e.layer = 'dim'; return ghostEnt(e, k); } return ''; },
+  tip(c,p){ const d = c.d; if(d.p2){ const e = this.make(c,p); return {h:'水平',v:'垂直',a:'平行'}[e.mode]+' '+fmtN(dimGeom(e).val); } if(d.p1) return '長さ '+fmtN(dist(d.p1,p)); return ''; }
+};
+CMD.PHOTO = {label:'撮影位置',
+  start(c){ ask('point','立ち位置（写真を撮った位置）を指定'); },
+  point(c,p){ const d = c.d;
+    if(!d.o){ d.o = p; ask('point','カメラを向けた方向を指定', {base:p}); return; }
+    if(dist(d.o,p) < 1e-6) return;
+    const n = doc.photoNo, o = d.o; ensureVis('photo');
+    commit(() => { doc.ents.push({id:doc.next++, type:'photo', layer:'photo', x:rnd(o.x), y:rnd(o.y), a:ra(ang(sub(p,o))), n:String(n)}); doc.photoNo = n + 1; });
+    toast('撮影位置 '+n+' を置きました。続けて置けます（Enterで終了）');
+    d.o = null; ask('point','次の立ち位置を指定（Enterで終了）', {opts:[{key:'END', label:'終了（Enter）'}]}); },
+  opt(c,k){ if(k === 'END') endCmd(); },
+  enter(){ endCmd(); },
+  preview(c,p,k){ const d = c.d; if(!d.o || dist(d.o,p) < 1e-6) return ''; return ghostEnt({type:'photo', layer:'photo', x:d.o.x, y:d.o.y, a:ang(sub(p,d.o)), n:doc.photoNo}, k); }
+};
+function mapSel(fn){ const ids = Array.from(sel); commit(() => { ids.forEach(id => { const i = doc.ents.findIndex(e => e.id === id); if(i >= 0) doc.ents[i] = fn(doc.ents[i]); }); }, true); return ids.length; }
+function addCopies(fn){ const ids = Array.from(sel); commit(() => { ids.forEach(id => { const e = ent(id); if(!e) return; const o = fn(e); o.id = doc.next++; doc.ents.push(o); }); }, true); return ids.length; }
+CMD.MOVE = {label:'移動',
+  start(c){ needSel(c, () => ask('point','基点を指定（図形の角などをつかむ）')); },
+  point(c,p){ if(!c.d.b){ c.d.b = p; ask('point','移動先を指定（距離・相対座標の入力も可）', {base:p}); return; }
+    const d = sub(p, c.d.b), n = mapSel(e => moveEnt(e, d.x, d.y)); toast(n+'個を移動しました'); endCmd(); },
+  preview(c,p,k){ if(!c.d.b) return ''; const d = sub(p, c.d.b); return selGhost(e => moveEnt(e, d.x, d.y), k) + lineGhost(c.d.b, p, k); }
+};
+CMD.COPY = {label:'複写',
+  start(c){ needSel(c, () => ask('point','基点を指定')); },
+  point(c,p){ if(!c.d.b){ c.d.b = p; ask('point','複写先を指定（続けて何個でも。Enterで終了）', {base:p, opts:[{key:'END', label:'終了（Enter）'}]}); return; }
+    const d = sub(p, c.d.b), n = addCopies(e => moveEnt(e, d.x, d.y)); toast(n+'個を複写しました。続けて置けます'); renderPrev(); },
+  opt(c,k){ if(k === 'END') endCmd(); },
+  enter(){ endCmd(); },
+  preview(c,p,k){ if(!c.d.b) return ''; const d = sub(p, c.d.b); return selGhost(e => moveEnt(e, d.x, d.y), k) + lineGhost(c.d.b, p, k); }
+};
+CMD.ROTATE = {label:'回転',
+  start(c){ needSel(c, () => ask('point','回転の中心（基点）を指定')); },
+  point(c,p){ if(!c.d.b){ c.d.b = p; ask('number','回転角度を入力（度・反時計回りが＋）、または点で方向を指定', {base:p, pointOK:true, opts:[{key:'R90', label:'90°'},{key:'R-90', label:'-90°'},{key:'R180', label:'180°'}]}); return; }
+    this.apply(c, ang(sub(p, c.d.b))); },
+  number(c,v){ this.apply(c, v*PI/180); },
+  opt(c,k){ if(k[0] === 'R') this.apply(c, (+k.slice(1))*PI/180); },
+  apply(c,a){ const b = c.d.b, n = mapSel(e => rotEnt(e, b, a)); toast(n+'個を '+(Math.round(deg(a)*100)/100)+'° 回転しました'); endCmd(); },
+  preview(c,p,k){ if(!c.d.b || dist(p,c.d.b) < 1e-6) return ''; const a = ang(sub(p, c.d.b)); return selGhost(e => rotEnt(e, c.d.b, a), k) + lineGhost(c.d.b, p, k); },
+  tip(c,p){ return c.d.b ? '角度 '+fmtA(ang(sub(p,c.d.b))) : ''; }
+};
+CMD.MIRROR = {label:'鏡像',
+  start(c){ needSel(c, () => ask('point','対称軸の1点目を指定')); },
+  point(c,p){ if(!c.d.a){ c.d.a = p; ask('point','対称軸の2点目を指定', {base:p}); return; }
+    if(dist(c.d.a,p) < 1e-6) return; c.d.b = p;
+    ask('opt','元の図形を消しますか？', {opts:[{key:'N', label:'残す（Enter）'},{key:'Y', label:'消す'}]}); },
+  opt(c,k){ if(!c.d.b) return; const a = c.d.a, b = c.d.b;
+    if(k === 'Y'){ const n = mapSel(e => mirEnt(e, a, b)); toast(n+'個を反転しました'); }
+    else { const n = addCopies(e => mirEnt(e, a, b)); toast(n+'個の鏡像を作りました（元も残しています）'); }
+    endCmd(); },
+  enter(c){ if(c.d.b) this.opt(c, 'N'); else endCmd(); },
+  preview(c,p,k){ if(!c.d.a) return ''; const b = c.d.b || p; if(dist(c.d.a,b) < 1e-6) return ''; return selGhost(e => mirEnt(e, c.d.a, b), k) + lineGhost(c.d.a, b, k); }
+};
+CMD.ERASE = {label:'削除', start(c){ needSel(c, () => { eraseSel(); endCmd(); }); }};
+CMD.EXPLODE = {label:'分解',
+  start(c){ needSel(c, () => {
+    const ids = Array.from(sel); let n = 0;
+    commit(() => { ids.forEach(id => { const e = ent(id); if(!e || e.type !== 'pline') return; const lines = prims(e).map(s => ({type:'line', layer:e.layer, x1:s.a.x, y1:s.a.y, x2:s.b.x, y2:s.b.y})); if(lines.length){ lines[0].id = e.id; replaceEnt(e.id, lines); n++; } }); });
+    sel.clear(); selChanged(); toast(n ? n+'個のポリラインを線に分解しました' : '分解できるのはポリライン（矩形を含む）です'); endCmd(); }); }
+};
+CMD.OFFSET = {label:'オフセット',
+  lopt(){ return {key:'L', label:st.offLayer === 'src' ? '作成先：元のレイヤ' : '作成先：現在レイヤ'}; },
+  start(c){ this.askD(c); },
+  askD(c){ c.d.step = 'd'; ask('number','距離を入力（Enterで '+fmtN(st.offD)+'）', {opts:[this.lopt()]}); },
+  number(c,v){ if(!(v > 0)) return toast('0より大きい数値を入れてください'); st.offD = v; save(); this.askPick(c); },
+  enter(c){ if(c.d.step === 'd') this.askPick(c); else endCmd(); },
+  askPick(c){ c.d.step = 'pick'; c.d.e = null; sel.clear(); selChanged(); ask('pick','オフセットする図形を選択（距離 '+fmtN(st.offD)+'・Enterで終了）', {opts:[this.lopt()]}); },
+  opt(c,k){ if(k === 'L'){ st.offLayer = st.offLayer === 'src' ? 'cur' : 'src'; save(); C.ask.opts = [this.lopt()]; renderPrompt(); } },
+  pick(c,e){ if(['line','pline','circle','arc'].indexOf(e.type) < 0) return toast('オフセットできるのは線・ポリライン・円・円弧です');
+    c.d.e = e.id; c.d.step = 'side'; sel.clear(); sel.add(e.id); selChanged(); ask('point','作る側をクリック', {noSnap:true, noTrack:true, opts:[this.lopt()]}); },
+  point(c,p){ if(c.d.step !== 'side') return; const e = ent(c.d.e); if(!e) return this.askPick(c);
+    const o = offsetEnt(e, st.offD, p);
+    if(!o) toast('この距離では内側に作れません'); else { delete o.id; const L = st.offLayer === 'cur' ? st.layer : e.layer; addEnt(o, L); }
+    this.askPick(c); },
+  preview(c,p,k){ if(c.d.step === 'side' && c.d.e && ent(c.d.e)){ const o = offsetEnt(ent(c.d.e), st.offD, p); return o ? ghostEnt(o, k) : ''; } return ''; }
+};
+CMD.TRIM = {label:'トリム',
+  start(c){ sel.clear(); selChanged(); ask('pick','切り取る部分をクリック（交わる図形がすべて境界になります・Enterで終了）'); },
+  pick(c,e,p){ const r = trimEnt(e,p); if(r.msg) return toast(r.msg);
+    commit(() => { if(r.del || !r.repl.length) doc.ents = doc.ents.filter(x => x.id !== e.id); else replaceEnt(e.id, r.repl); });
+    if(r.del) toast('交わる境界がないので、図形ごと削除しました（「戻す」で戻せます）'); },
+  enter(){ endCmd(); }
+};
+CMD.EXTEND = {label:'延長',
+  start(c){ sel.clear(); selChanged(); ask('pick','延ばしたい線の「端の近く」をクリック（Enterで終了）'); },
+  pick(c,e,p){ const r = extendEnt(e,p); if(r.msg) return toast(r.msg); commit(() => replaceEnt(e.id, r.repl)); },
+  enter(){ endCmd(); }
+};
+function cornerLines(e1, p1, e2, p2){
+  const a1 = P(e1.x1,e1.y1), b1 = P(e1.x2,e1.y2), a2 = P(e2.x1,e2.y1), b2 = P(e2.x2,e2.y2), d1 = sub(b1,a1), d2 = sub(b2,a2);
+  const X = lineX(a1, d1, a2, d2); if(!X) return {msg:'平行な線なので角を作れません'};
+  const t = (a,d,q) => dot(sub(q,a),d)/dot(d,d);
+  const mk = (e,a,b,d,pk) => { const tI = t(a,d,X), tc = t(a,d,closestPrim({k:'s',a,b},pk)), o = clone(e);
+    if(tc <= tI){ o.x1 = a.x; o.y1 = a.y; o.x2 = rnd(X.x); o.y2 = rnd(X.y); } else { o.x1 = rnd(X.x); o.y1 = rnd(X.y); o.x2 = b.x; o.y2 = b.y; } return o; };
+  return {a:mk(e1,a1,b1,d1,p1), b:mk(e2,a2,b2,d2,p2)};
+}
+CMD.CORNER = {label:'コーナー',
+  start(c){ sel.clear(); selChanged(); ask('pick','1本目の線を選択（残したい側をクリック）'); },
+  pick(c,e,p){ if(e.type !== 'line') return toast('コーナーは線（線分）で使えます。矩形やポリラインは「分解」してから');
+    if(!c.d.e1){ c.d.e1 = e.id; c.d.p1 = p; sel.clear(); sel.add(e.id); selChanged(); ask('pick','2本目の線を選択（残したい側をクリック）'); return; }
+    if(e.id === c.d.e1) return;
+    const r = cornerLines(ent(c.d.e1), c.d.p1, e, p); if(r.msg) return toast(r.msg);
+    const id1 = c.d.e1; commit(() => { replaceEnt(id1, [r.a]); replaceEnt(e.id, [r.b]); });
+    sel.clear(); selChanged(); toast('角を作りました'); endCmd(); }
+};
+CMD.DIST = {label:'距離',
+  start(c){ ask('point','1点目を指定'); },
+  point(c,p){ if(!c.d.a){ c.d.a = p; ask('point','2点目を指定', {base:p}); return; }
+    const d = sub(p, c.d.a), L = len(d); ev.dist = L;
+    showResult('距離 <b>'+fmtN(L)+' mm</b><br>ΔX '+fmtN(d.x)+'　ΔY '+fmtN(d.y)+'　角度 '+fmtA(ang(d))); endCmd(); },
+  preview(c,p,k){ return c.d.a ? lineGhost(c.d.a, p, k) : ''; }
+};
+CMD.AREA = {label:'面積',
+  start(c){ c.d.pts = []; ask('pick','面積を測る図形（矩形・閉じたポリライン・円）をクリック', {opts:[{key:'P', label:'頂点を順に指定する'}]}); },
+  pick(c,e){ const a = areaOf(e); if(!a) return toast('閉じた図形を選ぶか、「頂点を順に指定する」を使います'); this.report(a.a, a.l); endCmd(); },
+  opt(c,k){ if(k === 'P'){ c.d.pts = []; ask('point','1つ目の頂点を指定'); } else if(k === 'END') this.fin(c); },
+  point(c,p){ c.d.pts.push(p); ask('point','次の頂点を指定（'+c.d.pts.length+'点・Enterで計算）', {base:p, opts:[{key:'END', label:'計算する（Enter）'}]}); },
+  enter(c){ if(c.d.pts.length) this.fin(c); else endCmd(); },
+  fin(c){ const ps = c.d.pts; if(ps.length < 3) return toast('3点以上必要です'); this.report(Math.abs(polyArea(ps)), perim(ps, true)); endCmd(); },
+  report(mm2, L){ const r = areaRule(mm2); ev.area = {m2:r.m2};
+    showResult('面積 <b>'+r.m2.toFixed(4)+' ㎡</b>（'+fmtN(mm2)+' mm²）<br>算定要領の例（小数第2位まで・第3位切捨て）：<b>'+r.a2.toFixed(2)+' ㎡</b><br>周長 '+fmtN(L)+' mm'); },
+  preview(c,p,k){ return c.ask && c.ask.kind === 'point' && c.d.pts.length ? polyGhost(c.d.pts.concat([p]), k, true) : ''; }
+};
+CMD.GRIP = {label:'グリップ編集',
+  start(){},
+  point(c,p){ const e = ent(c.d.id); if(!e){ endCmd(); return; } const o = applyGrip(e, c.d.k, p, c.d.from); commit(() => replaceEnt(e.id, [o]), true); endCmd(); },
+  preview(c,p,k){ const e = ent(c.d.id); return e ? ghostEnt(applyGrip(e, c.d.k, p, c.d.from), k) : ''; }
+};
+function startGrip(id, k, from){ startCmd('GRIP'); C.d = {id, k, from}; ask('point','グリップの移動先を指定（Escで取消）', {base:from}); }
+const ALIAS = {L:'LINE', LINE:'LINE', '線':'LINE', PL:'PLINE', PLINE:'PLINE', 'ポリライン':'PLINE', REC:'RECT', RECT:'RECT', RECTANG:'RECT', '矩形':'RECT',
+  C:'CIRCLE', CIRCLE:'CIRCLE', '円':'CIRCLE', A:'ARC', ARC:'ARC', '円弧':'ARC', T:'TEXT', TEXT:'TEXT', '文字':'TEXT', DIM:'DIM', D:'DIM', '寸法':'DIM',
+  M:'MOVE', MOVE:'MOVE', '移動':'MOVE', CO:'COPY', CP:'COPY', COPY:'COPY', '複写':'COPY', RO:'ROTATE', ROTATE:'ROTATE', '回転':'ROTATE',
+  MI:'MIRROR', MIRROR:'MIRROR', '鏡像':'MIRROR', O:'OFFSET', OFFSET:'OFFSET', 'オフセット':'OFFSET', '複線':'OFFSET', TR:'TRIM', TRIM:'TRIM', 'トリム':'TRIM',
+  EX:'EXTEND', EXTEND:'EXTEND', '延長':'EXTEND', F:'CORNER', FILLET:'CORNER', 'コーナー':'CORNER', X:'EXPLODE', EXPLODE:'EXPLODE', '分解':'EXPLODE',
+  E:'ERASE', ERASE:'ERASE', '削除':'ERASE', '消去':'ERASE', DI:'DIST', DIST:'DIST', '距離':'DIST', AA:'AREA', AREA:'AREA', '面積':'AREA',
+  PH:'PHOTO', '撮影':'PHOTO', DMG:'DMG', '損傷':'DMG', '損傷線':'DMG', U:'UNDO', UNDO:'UNDO', REDO:'REDO'};
+
+function submit(str){
+  str = (str || '').trim();
+  if(!C){
+    if(!str){ if(lastCmd) startCmd(lastCmd); return; }
+    const name = ALIAS[toHalf(str).toUpperCase()] || ALIAS[str];
+    if(name) startCmd(name);
+    else if(/^[\d.,<@#\-]+$/.test(toHalf(str))) toast('先に左のツール（線・矩形など）を選んでから数値を入れます');
+    else toast('「'+str+'」というコマンドはありません（説明書の「コマンド一覧」）');
+    return;
+  }
+  const a = C.ask; if(!a) return;
+  if(!str){
+    if(a.kind === 'select'){ selDone(); return; }
+    if(C.def.enter){ C.def.enter(C); return; }
+    if(a.kind === 'opt' && C.def.opt){ C.def.opt(C, (a.opts && a.opts[0] && a.opts[0].key) || ''); return; }
+    cancelCmd(); return;
+  }
+  const oh = (a.opts || []).find(o => o.key.toUpperCase() === toHalf(str).toUpperCase() || o.label === str);
+  if(oh && a.kind !== 'text'){ if(oh.key === 'SELDONE') selDone(); else C.def.opt(C, oh.key); return; }
+  if(a.kind === 'point'){ const p = parsePoint(str, a.base || null); if(!p){ toast('入力の形が違います（例：1820　3640,2730　1820<90）'); return; } C.def.point(C, p); }
+  else if(a.kind === 'number'){ const v = parseFloat(toHalf(str).replace(/,/g,'')); if(!isFinite(v)){ toast('数値を入れてください'); return; } C.def.number(C, v); }
+  else if(a.kind === 'text'){ C.def.text(C, str); }
+  else if(a.kind === 'opt'){ toast('上のボタンから選んでください'); }
+  else toast('図形をクリック（タップ）して選んでください');
+  renderPrev();
+}
+function submitCmd(){ const el = $('#cmd'), v = el.value; el.value = ''; submit(v); updateTip(); }
+function escape(){
+  if(winSel){ winSel = null; renderPrev(); return; }
+  if(C){ cancelCmd(); return; }
+  if(sel.size){ sel.clear(); selChanged(); }
+  $('#cmd').value = ''; updateTip();
+}
+function eraseSel(){ const ids = Array.from(sel); if(!ids.length) return; commit(() => { doc.ents = doc.ents.filter(e => ids.indexOf(e.id) < 0); }); sel.clear(); selChanged(); toast(ids.length+'個を削除しました'); }
+function selChanged(){ ev.sel++; renderOverlays(); renderProps(); renderPrompt(); schedTut(); }
+function selectAll(){ doc.ents.forEach(e => { if(visible(e) && !locked(e)) sel.add(e.id); }); selChanged(); }
+
+/* ================= ポインタ操作 ================= */
+const ptrs = new Map(); let gest = null, pinch = null, pinched = false;
+function gripAt(sp, touch){
+  if(!sel.size || sel.size > 30) return null;
+  const tol = (touch ? 22 : 9), raw = toWorld(sp.x, sp.y);
+  let best = null, bd = tol/view.s;
+  sel.forEach(id => { const e = ent(id); if(!e) return; grips(e).forEach(g => { const d = dist(raw, g.p); if(d < bd){ bd = d; best = {id, k:g.k, p:g.p}; } }); });
+  return best;
+}
+function showLoupe(sp){
+  const lp = $('#loupe'), p = hv && hv.p ? hv.p : toWorld(sp.x, sp.y), w = 132/(view.s*3);
+  $('#lsvg').setAttribute('viewBox', (p.x - w/2)+' '+(-p.y - w/2)+' '+w+' '+w);
+  let x = sp.x - 66, y = sp.y - 66 - 120; if(y < 4) y = sp.y + 60; if(x < 4) x = 4; if(x > W() - 136) x = W() - 136;
+  lp.style.left = x+'px'; lp.style.top = y+'px'; lp.hidden = false;
+}
+function hideLoupe(){ $('#loupe').hidden = true; }
+function hoverAt(sp, touch){
+  let nh = null;
+  if(C && C.ask && acceptsPoint()){ hv = resolve(sp, {touch}); if(!hv) hv = {p:toWorld(sp.x,sp.y), raw:toWorld(sp.x,sp.y), sx:sp.x, sy:sp.y}; }
+  else { const raw = toWorld(sp.x, sp.y); hv = {p:raw, raw, sx:sp.x, sy:sp.y}; if(!C || (C.ask && (C.ask.kind === 'pick' || C.ask.kind === 'select'))){ const e = hitEnt(raw, {tol:touch ? 22 : 10}); nh = e ? e.id : null; } }
+  hv.touch = !!touch;
+  if(nh !== hoverId){ hoverId = nh; renderOverlays(); }
+  renderPrev();
+}
+function clickAt(sp, o){
+  o = o || {};
+  if(C && C.ask){
+    const k = C.ask.kind;
+    if(acceptsPoint()){ const r = o.useHv && hv && hv.p ? hv : resolve(sp, o); if(!r) return; hv = Object.assign(r, {sx:sp.x, sy:sp.y, touch:o.touch}); C.def.point(C, r.p); renderPrev(); return; }
+    if(k === 'pick'){ const raw = toWorld(sp.x, sp.y), e = hitEnt(raw, {tol:o.touch ? 22 : 10}); if(e) C.def.pick(C, e, raw); else toast('図形の線の上をクリック（タップ）してください'); renderPrev(); return; }
+    if(k === 'select'){ selToggleAt(sp, o); return; }
+    if(k === 'opt'){ toast('上に出ているボタンから選んでください'); return; }
+    return;
+  }
+  const g = gripAt(sp, o.touch); if(g){ startGrip(g.id, g.k, g.p); return; }
+  selToggleAt(sp, o);
+}
+function selToggleAt(sp, o){
+  const raw = toWorld(sp.x, sp.y), e = hitEnt(raw, {tol:o.touch ? 22 : 10});
+  if(!e){ if(!C && sel.size){ sel.clear(); selChanged(); } else if(!C){ const le = hitEnt(raw, {tol:o.touch ? 22 : 10, allowLocked:true}); if(le) toast('「'+LBY[le.layer].name+'」レイヤはロック中のため選べません'); } return; }
+  if(o.shift || sel.has(e.id)) sel.delete(e.id); else sel.add(e.id);
+  if(!C) showSide('prop', true);
+  selChanged();
+}
+function finishWin(shift){
+  const w = winSel; winSel = null; if(!w) return;
+  const a = toWorld(w.a.x, w.a.y), b = toWorld(w.b.x, w.b.y), cr = w.b.x < w.a.x;
+  const r = {x0:Math.min(a.x,b.x), y0:Math.min(a.y,b.y), x1:Math.max(a.x,b.x), y1:Math.max(a.y,b.y)};
+  let n = 0;
+  doc.ents.forEach(e => { if(!visible(e) || locked(e)) return; if(entInRect(e, r, cr)){ if(shift) sel.delete(e.id); else sel.add(e.id); n++; } });
+  if(!n) toast(cr ? '交差選択：触れた図形はありません' : '窓選択：すっぽり入った図形はありません');
+  if(!C && n) showSide('prop', true);
+  selChanged(); renderPrev();
+}
+function canWindow(){ return !C || (C.ask && C.ask.kind === 'select'); }
+svg.addEventListener('pointerdown', e => {
+  try{ svg.setPointerCapture(e.pointerId); }catch(err){}
+  const sp = evXY(e); ptrs.set(e.pointerId, sp);
+  if(ptrs.size === 2){
+    gest = null; winSel = null; hideLoupe(); pinched = true;
+    const v = Array.from(ptrs.values()), mid = mul(add(v[0],v[1]), 0.5);
+    pinch = {d:dist(v[0],v[1]) || 1, s:view.s, mid, w:toWorld(mid.x, mid.y), z:false, p:false};
+    renderPrev(); return;
+  }
+  if(ptrs.size > 2) return;
+  const touch = e.pointerType === 'touch' || e.pointerType === 'pen';
+  if(e.button === 1 || (e.button === 0 && st.hand)){ gest = {type:'pan', id:e.pointerId, s0:sp, cx:view.cx, cy:view.cy, moved:false}; return; }
+  if(e.button === 2){ gest = {type:'right', id:e.pointerId, s0:sp, cx:view.cx, cy:view.cy, moved:false}; return; }
+  gest = {type:touch ? 'touch' : 'mouse', id:e.pointerId, s0:sp, moved:false, shift:e.shiftKey};
+  if(!C) gest.grip = gripAt(sp, touch);
+  if(acceptsPoint()){ gest.aim = true; hoverAt(sp, touch); if(touch) showLoupe(sp); }
+});
+svg.addEventListener('pointermove', e => {
+  const sp = evXY(e);
+  if(ptrs.has(e.pointerId)) ptrs.set(e.pointerId, sp);
+  if(pinch && ptrs.size >= 2){
+    const v = Array.from(ptrs.values()), d = dist(v[0],v[1]), mid = mul(add(v[0],v[1]), 0.5);
+    const ns = clampS(pinch.s * d / pinch.d);
+    if(Math.abs(ns - view.s) > 1e-9) pinch.z = true;
+    if(dist(mid, pinch.mid) > 4) pinch.p = true;
+    view.s = ns; view.cx = pinch.w.x - (mid.x - W()/2)/ns; view.cy = pinch.w.y + (mid.y - H()/2)/ns;
+    applyView(); return;
+  }
+  if(!gest){ if(e.pointerType === 'mouse') hoverAt(sp, false); return; }
+  if(gest.id !== e.pointerId) return;
+  const dx = sp.x - gest.s0.x, dy = sp.y - gest.s0.y;
+  if(!gest.moved && Math.hypot(dx,dy) > (gest.type === 'touch' ? 8 : 5)) gest.moved = true;
+  if(gest.type === 'pan' || (gest.type === 'right' && gest.moved)){ view.cx = gest.cx - dx/view.s; view.cy = gest.cy + dy/view.s; applyView(); return; }
+  if(gest.type === 'right') return;
+  const touch = gest.type === 'touch';
+  if(gest.grip && gest.moved && !C){ startGrip(gest.grip.id, gest.grip.k, gest.grip.p); gest.dragGrip = true; gest.aim = touch; }
+  if(gest.aim || (C && acceptsPoint())){ hoverAt(sp, touch); if(touch) showLoupe(sp); return; }
+  if(gest.moved && canWindow()){ winSel = {a:gest.s0, b:sp}; renderPrev(); return; }
+  if(!touch) hoverAt(sp, false);
+});
+function endPointer(e, cancel){
+  const sp = evXY(e), g = gest;
+  ptrs.delete(e.pointerId);
+  if(pinch){ if(ptrs.size < 2){ if(pinch.z) ev.zoom++; if(pinch.p) ev.pan++; pinch = null; schedTut(); } return; }
+  if(pinched){ if(ptrs.size === 0){ pinched = false; gest = null; hideLoupe(); } return; }
+  if(!g || g.id !== e.pointerId) return;
+  gest = null; hideLoupe();
+  if(cancel){ winSel = null; renderPrev(); return; }
+  if(g.type === 'pan'){ if(g.moved){ ev.pan++; schedTut(); } return; }
+  if(g.type === 'right'){ if(g.moved){ ev.pan++; schedTut(); } else rightClick(sp); return; }
+  const touch = g.type === 'touch';
+  if(winSel){ finishWin(g.shift); return; }
+  if(g.aim || g.dragGrip){ if(C && acceptsPoint()) clickAt(sp, {touch, useHv:true}); return; }
+  if(!g.moved) clickAt(sp, {touch, shift:g.shift});
+}
+svg.addEventListener('pointerup', e => endPointer(e, false));
+svg.addEventListener('pointercancel', e => endPointer(e, true));
+svg.addEventListener('pointerleave', e => { if(e.pointerType === 'mouse' && !gest){ hv = null; if(hoverId != null){ hoverId = null; renderOverlays(); } renderPrev(); } });
+svg.addEventListener('contextmenu', e => e.preventDefault());
+svg.addEventListener('wheel', e => {
+  e.preventDefault(); const sp = evXY(e);
+  if(e.ctrlKey || st.wheel === 'zoom'){ zoomAt(sp.x, sp.y, Math.exp(-e.deltaY*(e.ctrlKey ? 0.01 : 0.0015))); }
+  else { view.cx += e.deltaX/view.s; view.cy -= e.deltaY/view.s; ev.pan++; applyView(); schedTut(); }
+}, {passive:false});
+let gScale = 1;
+svg.addEventListener('gesturestart', e => { e.preventDefault(); gScale = 1; });
+svg.addEventListener('gesturechange', e => { e.preventDefault(); if(ptrs.size >= 2) return; const sp = evXY(e); zoomAt(sp.x, sp.y, e.scale/gScale); gScale = e.scale; });
+document.addEventListener('gesturestart', e => e.preventDefault());
+function rightClick(sp){
+  if(st.rclick === 'jw'){
+    if(C && acceptsPoint()){ const r = resolve(sp, {force:true}); if(r){ hv = Object.assign(r, {sx:sp.x, sy:sp.y}); C.def.point(C, r.p); renderPrev(); } }
+    else toast('右クリックは「点の読み取り」に設定されています（設定タブで変更）');
+    return;
+  }
+  submit('');
+}
+
+/* ================= キーボード ================= */
+document.addEventListener('keydown', e => {
+  if(document.querySelector('dialog[open]')) return;
+  const t = e.target, inInput = /INPUT|SELECT|TEXTAREA/.test(t.tagName || ''), cmd = $('#cmd');
+  if((e.ctrlKey || e.metaKey) && !e.altKey){
+    const k = (e.key || '').toLowerCase();
+    if(k === 'z' && !inInput){ e.preventDefault(); if(e.shiftKey) doRedo(); else doUndo(); }
+    else if(k === 'y' && !inInput){ e.preventDefault(); doRedo(); }
+    else if(k === 'a' && !inInput){ e.preventDefault(); selectAll(); }
+    return;
+  }
+  if(e.key === 'F3'){ e.preventDefault(); toggleOs('all'); return; }
+  if(e.key === 'F8'){ e.preventDefault(); toggleOrtho(); return; }
+  if(e.key === 'F9'){ e.preventDefault(); toggleGridSnap(); return; }
+  if(e.key === 'F10'){ e.preventDefault(); togglePolar(); return; }
+  if(t === cmd){
+    if(e.isComposing) return;
+    if(e.key === 'Enter'){ e.preventDefault(); submitCmd(); }
+    else if(e.key === 'Escape'){ e.preventDefault(); cmd.value = ''; escape(); cmd.blur(); }
+    else if(e.key === ' ' && !(C && C.ask && C.ask.kind === 'text')){ e.preventDefault(); submitCmd(); }
+    setTimeout(updateTip, 0); return;
+  }
+  if(inInput) return;
+  if(e.key === 'Escape'){ escape(); return; }
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); submitCmd(); return; }
+  if(e.key === 'Delete' || (e.key === 'Backspace' && !cmd.value)){ if(sel.size && !C){ e.preventDefault(); eraseSel(); } return; }
+  if(e.key === 'Backspace'){ e.preventDefault(); cmd.value = cmd.value.slice(0, -1); updateTip(); return; }
+  if(e.key.length === 1 && !e.altKey){ e.preventDefault(); if(C && C.ask && C.ask.kind === 'text'){ cmd.focus(); } cmd.value += e.key; updateTip(); renderPrev(); }
+});
+
+/* ================= ツールバー ================= */
+const IC = {
+  LINE:'<path d="M5 19L19 5"/><circle cx="5" cy="19" r="1.6"/><circle cx="19" cy="5" r="1.6"/>',
+  PLINE:'<path d="M4 18l5-9 5 6 6-10"/>',
+  RECT:'<rect x="4" y="6" width="16" height="12"/>',
+  CIRCLE:'<circle cx="12" cy="12" r="7.5"/><path d="M12 12h7.5"/>',
+  ARC:'<path d="M4.5 17a7.5 7.5 0 0115 0"/><circle cx="12" cy="17" r="1.2"/>',
+  TEXT:'<path d="M5 6h14M12 6v13M9 19h6"/>',
+  DIM:'<path d="M4 7v10M20 7v10M4 12h16M6 14l2-4M16 14l2-4"/>',
+  MOVE:'<path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/>',
+  COPY:'<rect x="9" y="9" width="11" height="11" rx="1"/><path d="M15 9V5a1 1 0 00-1-1H5a1 1 0 00-1 1v9a1 1 0 001 1h4"/>',
+  ROTATE:'<path d="M20 12a8 8 0 11-2.3-5.6"/><path d="M20 4v5h-5"/>',
+  MIRROR:'<path d="M12 3v18" stroke-dasharray="2 2.5"/><path d="M9 7L4 17h5zM15 7l5 10h-5z"/>',
+  OFFSET:'<path d="M4 15l8-8 8 8"/><path d="M4 20l8-8 8 8" opacity=".5"/>',
+  TRIM:'<circle cx="6" cy="7" r="2.5"/><circle cx="6" cy="17" r="2.5"/><path d="M8.2 8.5L20 17M8.2 15.5L20 7"/>',
+  EXTEND:'<path d="M20 4v16M4 12h9"/><path d="M13 12h6" stroke-dasharray="2 2"/><path d="M15 9l3 3-3 3"/>',
+  CORNER:'<path d="M6 20V6h14"/><circle cx="6" cy="6" r="1.8"/>',
+  EXPLODE:'<rect x="4" y="4" width="16" height="16" stroke-dasharray="3 3"/><path d="M9 9l6 6M15 9l-6 6"/>',
+  ERASE:'<path d="M4 16l8.5-8.5 6 6L14 18H6zM12 20h8"/>',
+  DIST:'<path d="M3.5 16.5L16.5 3.5l4 4-13 13z"/><path d="M7.5 12.5l2 2M10.5 9.5l2 2M13.5 6.5l2 2"/>',
+  AREA:'<rect x="4" y="4" width="16" height="16"/><path d="M4 10l6-6M4 16L16 4M8 20L20 8M14 20l6-6"/>',
+  PHOTO:'<circle cx="7" cy="17" r="3.2"/><path d="M9.5 14.5L18 6M13.5 6H18v4.5"/>',
+  DMG:'<path d="M5 3l4 6-2 4 5 3-2 5"/>'
+};
+const GROUPS = {
+  draw:['LINE','PLINE','RECT','CIRCLE','ARC','TEXT','DIM'],
+  edit:['MOVE','COPY','ROTATE','MIRROR','OFFSET','TRIM','EXTEND','CORNER','EXPLODE','ERASE'],
+  meas:['DIST','AREA'],
+  hosho:['PHOTO','DMG','TEXT','DIM']
+};
+const SHORT = {PHOTO:'撮影', DMG:'損傷線', PLINE:'ポリライン', OFFSET:'オフセット', CORNER:'コーナー'};
+function renderTools(){
+  $$('#grp button').forEach(b => b.setAttribute('aria-selected', b.dataset.g === st.g ? 'true' : 'false'));
+  $('#tools').innerHTML = GROUPS[st.g].map(n => '<button class="tool'+(n === 'DMG' ? ' t-dmg' : n === 'PHOTO' ? ' t-photo' : '')+'" data-c="'+n+'" aria-pressed="false" title="'+CMD[n].label+'"><svg class="i" viewBox="0 0 24 24">'+IC[n]+'</svg>'+(SHORT[n] || CMD[n].label)+'</button>').join('');
+  renderPrompt(); schedTut();
+}
+$('#grp').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if(!b) return; st.g = b.dataset.g; save(); renderTools(); });
+$('#tools').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if(!b) return; if(C && C.name === b.dataset.c){ cancelCmd(true); return; } startCmd(b.dataset.c); });
+$('#optbar').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if(!b || !C) return; if(b.dataset.k === 'SELDONE') selDone(); else if(C.def.opt) C.def.opt(C, b.dataset.k); renderPrev(); });
+
+/* ================= ステータスバー ================= */
+function renderBar(){
+  $$('#bar [data-os]').forEach(b => { const k = b.dataset.os; b.setAttribute('aria-pressed', (k === 'all' ? st.osOn : (st.osOn && st.os[k])) ? 'true' : 'false'); });
+  $('#tOrtho').setAttribute('aria-pressed', st.ortho ? 'true' : 'false');
+  $('#tPolar').setAttribute('aria-pressed', st.polar ? 'true' : 'false'); $('#tPolar').textContent = '極 '+st.polarInc+'°';
+  $('#tGrid').setAttribute('aria-pressed', st.gridSnap ? 'true' : 'false');
+  $('#curLayer').innerHTML = LAYERS.map(l => '<option value="'+l.id+'"'+(l.id === st.layer ? ' selected' : '')+'>'+l.name+'</option>').join('');
+  $('#bHand').setAttribute('aria-pressed', st.hand ? 'true' : 'false'); svg.classList.toggle('hand', !!st.hand);
+}
+function toggleOs(k){ if(k === 'all') st.osOn = st.osOn ? 0 : 1; else { if(!st.osOn){ st.osOn = 1; st.os[k] = 1; } else st.os[k] = st.os[k] ? 0 : 1; } save(); renderBar(); renderPrev(); schedTut(); toast(k === 'all' ? 'オブジェクトスナップ：'+(st.osOn ? 'オン' : 'オフ') : OSN[k]+'：'+(st.osOn && st.os[k] ? 'オン' : 'オフ'), 1500); }
+function toggleOrtho(){ st.ortho = st.ortho ? 0 : 1; if(st.ortho) st.polar = 0; save(); renderBar(); toast('直交モード：'+(st.ortho ? 'オン（水平・垂直だけ）' : 'オフ'), 1500); schedTut(); }
+function togglePolar(){ st.polar = st.polar ? 0 : 1; if(st.polar) st.ortho = 0; save(); renderBar(); toast('極トラッキング：'+(st.polar ? 'オン（'+st.polarInc+'°ごとに吸い付く）' : 'オフ'), 1500); schedTut(); }
+function toggleGridSnap(){ st.gridSnap = st.gridSnap ? 0 : 1; if(st.gridSnap && !+st.grid) st.grid = 910; save(); renderBar(); renderStatic(); toast('グリッド吸着：'+(st.gridSnap ? 'オン（'+st.grid+'mm）' : 'オフ'), 1500); }
+$('#bar').addEventListener('click', e => { const b = e.target.closest('[data-os]'); if(b) toggleOs(b.dataset.os); });
+$('#tOrtho').addEventListener('click', toggleOrtho);
+$('#tPolar').addEventListener('click', togglePolar);
+$('#tGrid').addEventListener('click', toggleGridSnap);
+$('#curLayer').addEventListener('change', e => setLayer(e.target.value));
+function setLayer(id){ st.layer = id; if(!st.lay[id].vis) st.lay[id].vis = true; save(); renderBar(); renderLayers(); renderEnts(); toast('現在レイヤ：'+LBY[id].name, 1500); schedTut(); }
+
+/* ================= 上部ボタン・数値キー ================= */
+$('#bEnter').addEventListener('click', submitCmd);
+$('#bEsc').addEventListener('click', () => { $('#cmd').value = ''; escape(); });
+$('#bUndo').addEventListener('click', doUndo);
+$('#bRedo').addEventListener('click', doRedo);
+$('#zIn').addEventListener('click', () => zoomAt(W()/2, H()/2, 1.35));
+$('#zOut').addEventListener('click', () => zoomAt(W()/2, H()/2, 1/1.35));
+$('#zFit').addEventListener('click', () => fitAll(false));
+$('#bHand').addEventListener('click', () => { st.hand = !st.hand; save(); renderBar(); toast(st.hand ? '画面移動：ドラッグで画面が動きます（もう一度押すと解除）' : '画面移動を解除しました', 2000); });
+const KP = [['7'],['8'],['9'],['⌫','BS'],['取消','ESC'],['閉じる','CLOSE'],['4'],['5'],['6'],[','],['<'],['@'],['1'],['2'],['3'],['0'],['.'],['-'],['確定','ENT']];
+$('#keypad').innerHTML = KP.map(k => '<button data-v="'+esc(k[1] || k[0])+'" class="'+(k[1] === 'ENT' ? 'w2' : (k[1] === 'ESC' || k[1] === 'CLOSE') ? 'sm' : '')+'">'+esc(k[0])+'</button>').join('');
+$('#keypad').addEventListener('pointerdown', e => e.preventDefault());
+$('#keypad').addEventListener('click', e => {
+  const b = e.target.closest('[data-v]'); if(!b) return; const v = b.dataset.v, cmd = $('#cmd'); ev.kp++;
+  if(v === 'BS') cmd.value = cmd.value.slice(0, -1);
+  else if(v === 'ENT') submitCmd();
+  else if(v === 'ESC'){ cmd.value = ''; escape(); }
+  else if(v === 'CLOSE') showKP(false);
+  else cmd.value += v;
+  updateTip(); renderPrev(); schedTut();
+});
+let kpAuto = false;
+function showKP(on, auto){ if(!on && auto && !kpAuto) return; $('#keypad').hidden = !on; if(on && !isWide() && st.sideOpen) setSideOpen(false); $('#bKp').setAttribute('aria-pressed', on ? 'true' : 'false'); kpAuto = !!(on && auto); if(on) ev.kp++; }
+function autoKP(){ const coarse = window.matchMedia && matchMedia('(pointer:coarse)').matches; if(C && C.ask && C.ask.kind === 'number' && coarse && $('#keypad').hidden) showKP(true, true); else if(kpAuto && !(C && C.ask && C.ask.kind === 'number')) showKP(false, true); if(C && C.ask && C.ask.kind === 'text'){ showKP(false); setTimeout(() => $('#cmd').focus(), 30); } }
+$('#bKp').addEventListener('click', () => showKP($('#keypad').hidden, false));
+$('#cmd').addEventListener('input', () => { updateTip(); renderPrev(); });
+
+/* ================= パネル ================= */
+function isWide(){ return window.innerWidth > 1100; }
+function showSide(p, auto){
+  st.side = p;
+  $$('.stabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.p === p ? 'true' : 'false'));
+  ['prop','layer','learn','set'].forEach(x => { $('#p-'+x).hidden = x !== p; });
+  renderLesBar();
+  if(!auto || isWide()) setSideOpen(auto ? (isWide() ? true : st.sideOpen) : true);
+  save();
+}
+function setSideOpen(o){ st.sideOpen = o; $('#side').classList.toggle('closed', !o); $('#bPanel').setAttribute('aria-pressed', o ? 'true' : 'false'); renderLesBar(); setTimeout(applyView, 0); }
+$$('.stabs button').forEach(b => b.addEventListener('click', () => showSide(b.dataset.p)));
+$('#bPanel').addEventListener('click', () => setSideOpen(!st.sideOpen));
+$('#bLearn').addEventListener('click', () => { showSide('learn'); });
+
+/* ---- プロパティ ---- */
+function numRow(k, label, v, u){ return '<label class="f">'+label+'<input data-f="'+k+'" type="text" inputmode="decimal" value="'+esc(v)+'"><span class="u">'+(u || '')+'</span></label>'; }
+function r2(v){ return Math.round(v*100)/100; }
+function renderProps(){
+  const box = $('#p-prop'), ids = Array.from(sel).filter(id => ent(id));
+  let h = lastResult ? '<div class="box"><b>測定結果</b><br>'+lastResult+'</div>' : '';
+  if(!ids.length){
+    const cnt = {}; doc.ents.forEach(e => cnt[e.type] = (cnt[e.type] || 0) + 1);
+    h += '<h3>何も選択していません</h3><p class="note">図形をクリック（タップ）すると、ここで長さや位置、レイヤを数値で直せます。左から右へ囲むと<b>窓選択</b>（すっぽり入った図形）、右から左へ囲むと<b>交差選択</b>（触れた図形）。選んだ図形の青い四角（グリップ）をつかむと、点を動かせます。</p>';
+    h += '<h3>この図面</h3><dl class="kv">'+(Object.keys(cnt).length ? Object.keys(cnt).map(t => '<dt>'+TYPE_JA[t]+'</dt><dd>'+cnt[t]+'個</dd>').join('') : '<dt>図形</dt><dd>まだありません</dd>')+'</dl>';
+    box.innerHTML = h; return;
+  }
+  if(ids.length > 1){
+    const cnt = {}; ids.forEach(id => { const t = ent(id).type; cnt[t] = (cnt[t] || 0) + 1; });
+    h += '<h3>'+ids.length+'個を選択中</h3><dl class="kv">'+Object.keys(cnt).map(t => '<dt>'+TYPE_JA[t]+'</dt><dd>'+cnt[t]+'個</dd>').join('')+'</dl>';
+    h += '<label class="f">レイヤ<select data-f="layerAll"><option value="">（変更しない）</option>'+LAYERS.map(l => '<option value="'+l.id+'">'+l.name+'</option>').join('')+'</select><span></span></label>';
+    h += '<div class="row"><button class="sb" data-act="erase">削除</button><button class="sb" data-act="explode">分解</button><button class="sb" data-act="clear">選択解除</button></div>';
+    box.innerHTML = h; bindProps(null); return;
+  }
+  const e = ent(ids[0]);
+  h += '<h3>'+TYPE_JA[e.type]+'</h3>';
+  h += '<label class="f">レイヤ<select data-f="layer">'+LAYERS.map(l => '<option value="'+l.id+'"'+(l.id === e.layer ? ' selected' : '')+'>'+l.name+'</option>').join('')+'</select><span></span></label>';
+  if(e.type === 'line'){
+    const L = dist(P(e.x1,e.y1), P(e.x2,e.y2)), a = ang(sub(P(e.x2,e.y2), P(e.x1,e.y1)));
+    h += numRow('x1','始点 X',r2(e.x1),'mm') + numRow('y1','始点 Y',r2(e.y1),'mm') + numRow('x2','終点 X',r2(e.x2),'mm') + numRow('y2','終点 Y',r2(e.y2),'mm');
+    h += numRow('len','長さ',r2(L),'mm') + numRow('ang','角度',r2(deg(normA(a))),'°');
+    h += '<p class="note">長さ・角度を変えると、始点はそのままで終点が動きます。</p>';
+  } else if(e.type === 'pline'){
+    const ri = rectInfo(e), ps = e.pts.map(q => P(q[0],q[1]));
+    if(ri){ h += numRow('rw','幅',r2(ri.w),'mm') + numRow('rh','高さ',r2(ri.h),'mm') + numRow('rx','左下 X',r2(ri.x0),'mm') + numRow('ry','左下 Y',r2(ri.y0),'mm') + '<p class="note">幅・高さを変えると、左下の角を固定して大きさが変わります。</p>'; }
+    h += '<dl class="kv"><dt>頂点</dt><dd>'+ps.length+'点</dd><dt>'+(e.closed ? '周長' : '長さ')+'</dt><dd>'+fmtN(perim(ps, e.closed))+' mm</dd></dl>';
+    h += '<label class="f">閉じる<input data-f="closed" type="checkbox" style="width:22px;height:22px"'+(e.closed ? ' checked' : '')+'><span></span></label>';
+    if(e.closed){ const r = areaRule(Math.abs(polyArea(ps))); h += '<div class="box">面積 '+r.m2.toFixed(4)+' ㎡<br>算定要領の例（第3位切捨て）：<b>'+r.a2.toFixed(2)+' ㎡</b></div>'; }
+    h += '<div class="row"><button class="sb" data-act="explode">線に分解</button></div>';
+  } else if(e.type === 'circle'){
+    h += numRow('cx','中心 X',r2(e.cx),'mm') + numRow('cy','中心 Y',r2(e.cy),'mm') + numRow('r','半径',r2(e.r),'mm') + numRow('dia','直径',r2(e.r*2),'mm');
+    h += '<div class="box">面積 '+areaRule(PI*e.r*e.r).m2.toFixed(4)+' ㎡　円周 '+fmtN(TAU*e.r)+' mm</div>';
+  } else if(e.type === 'arc'){
+    h += numRow('cx','中心 X',r2(e.cx),'mm') + numRow('cy','中心 Y',r2(e.cy),'mm') + numRow('r','半径',r2(e.r),'mm') + numRow('a1','開始角',r2(deg(normA(e.a1))),'°') + numRow('a2','終了角',r2(deg(normA(e.a1+span(e)))),'°');
+    h += '<dl class="kv"><dt>弧の長さ</dt><dd>'+fmtN(e.r*span(e))+' mm</dd></dl>';
+  } else if(e.type === 'text'){
+    h += '<label class="f">内容<input data-f="t" type="text" value="'+esc(e.t)+'"><span></span></label>' + numRow('th','高さ',r2(e.h/100),'用紙mm') + numRow('rot','角度',r2(deg(normS(e.rot||0))),'°') + numRow('x','位置 X',r2(e.x),'mm') + numRow('y','位置 Y',r2(e.y),'mm');
+  } else if(e.type === 'dim'){
+    const g = dimGeom(e);
+    h += '<label class="f">種類<select data-f="mode">'+[['h','水平'],['v','垂直'],['a','平行']].map(([k,l]) => '<option value="'+k+'"'+(e.mode === k ? ' selected' : '')+'>'+l+'</option>').join('')+'</select><span></span></label>';
+    h += '<dl class="kv"><dt>実際の長さ</dt><dd><b>'+fmtN(g.val)+' mm</b></dd></dl>';
+    h += '<label class="f">表示の文字<input data-f="ovr" type="text" placeholder="（自動）" value="'+esc(e.ovr || '')+'"><span></span></label>';
+    h += '<p class="note">寸法は図形と連動しません。図形を直したら、寸法も消して入れ直すか、グリップで端点を合わせ直します。</p>';
+  } else if(e.type === 'photo'){
+    h += '<label class="f">番号<input data-f="n" type="text" value="'+esc(e.n)+'"><span></span></label>' + numRow('pa','向き',r2(deg(normS(e.a))),'°') + numRow('x','位置 X',r2(e.x),'mm') + numRow('y','位置 Y',r2(e.y),'mm');
+  }
+  h += '<div class="row"><button class="sb" data-act="erase">削除</button><button class="sb" data-act="clear">選択解除</button></div>';
+  box.innerHTML = h; bindProps(e);
+}
+function bindProps(e){
+  const box = $('#p-prop');
+  $$('[data-act]', box).forEach(b => b.addEventListener('click', () => {
+    const a = b.dataset.act;
+    if(a === 'erase') eraseSel(); else if(a === 'clear'){ sel.clear(); selChanged(); } else if(a === 'explode') startCmd('EXPLODE');
+  }));
+  $$('[data-f]', box).forEach(inp => inp.addEventListener('change', () => {
+    const f = inp.dataset.f, raw = inp.type === 'checkbox' ? inp.checked : inp.value;
+    if(f === 'layerAll'){ if(!raw) return; const ids = Array.from(sel); commit(() => ids.forEach(id => { const x = ent(id); if(x) x.layer = raw; }), true); ev.prop++; renderProps(); return; }
+    const v = parseFloat(toHalf(String(raw)).replace(/,/g,''));
+    const id = e.id, cur = ent(id); if(!cur) return;
+    const o = clone(cur);
+    switch(f){
+      case 'layer': o.layer = raw; break;
+      case 'x1': case 'y1': case 'x2': case 'y2': case 'cx': case 'cy': case 'x': case 'y': if(!isFinite(v)) return; o[f] = rnd(v); break;
+      case 'len': case 'ang': { if(!isFinite(v)) return; const a0 = P(o.x1,o.y1), d = sub(P(o.x2,o.y2), a0); const L = f === 'len' ? v : len(d), an = f === 'ang' ? v*PI/180 : ang(d); if(!(L > 0)) return; o.x2 = rnd(a0.x + L*Math.cos(an)); o.y2 = rnd(a0.y + L*Math.sin(an)); break; }
+      case 'rw': case 'rh': case 'rx': case 'ry': { if(!isFinite(v)) return; const ri = rectInfo(o); let {x0, y0, w, h} = ri; if(f === 'rw'){ if(!(v > 0)) return; w = v; } if(f === 'rh'){ if(!(v > 0)) return; h = v; } if(f === 'rx') x0 = v; if(f === 'ry') y0 = v; o.pts = [[x0,y0],[x0+w,y0],[x0+w,y0+h],[x0,y0+h]].map(q => [rnd(q[0]), rnd(q[1])]); break; }
+      case 'closed': o.closed = !!raw && o.pts.length >= 3; break;
+      case 'r': if(!(v > 0)) return; o.r = rnd(v); break;
+      case 'dia': if(!(v > 0)) return; o.r = rnd(v/2); break;
+      case 'a1': { if(!isFinite(v)) return; const end = normA(o.a1) + span(o); o.a1 = ra(normA(v*PI/180)); o.a2 = ra(o.a1 + normA(end - o.a1)); break; }
+      case 'a2': { if(!isFinite(v)) return; const a1 = normA(o.a1); o.a2 = ra(a1 + normA(v*PI/180 - a1)); break; }
+      case 't': if(!String(raw).trim()) return; o.t = String(raw); break;
+      case 'th': if(!(v > 0)) return; o.h = rnd(v*100); break;
+      case 'rot': if(!isFinite(v)) return; o.rot = ra(v*PI/180); break;
+      case 'mode': { const lp = dimLinePt(o); o.mode = raw; if(raw === 'h') o.off = rnd(lp.y); else if(raw === 'v') o.off = rnd(lp.x); else o.off = rnd(dot(sub(lp, P(o.x1,o.y1)), lnorm(unit(sub(P(o.x2,o.y2), P(o.x1,o.y1)))))); break; }
+      case 'ovr': o.ovr = String(raw); break;
+      case 'n': if(!String(raw).trim()) return; o.n = String(raw); break;
+      case 'pa': if(!isFinite(v)) return; o.a = ra(v*PI/180); break;
+      default: return;
+    }
+    commit(() => replaceEnt(id, [o]), true); ev.prop++; renderProps(); schedTut();
+  }));
+}
+
+/* ---- レイヤ ---- */
+function renderLayers(){
+  const cnt = {}; doc.ents.forEach(e => cnt[e.layer] = (cnt[e.layer] || 0) + 1);
+  let h = '<p class="note">レイヤは図形を種類ごとに分ける透明なシートです。名前をタップすると「現在レイヤ」（これから描く図形が入るレイヤ）になります。</p><ul class="lys">';
+  LAYERS.forEach(l => { const s = st.lay[l.id];
+    h += '<li class="'+(l.id === st.layer ? 'cur' : '')+'"><span class="sw" style="background:var('+l.v+')"></span><button data-ly="'+l.id+'" style="text-align:left;border:0;background:none;font-size:.86rem;padding:0">'+(l.id === st.layer ? '<b>'+l.name+'</b>（現在）' : l.name)+'</button>'+
+      '<button data-vis="'+l.id+'" aria-pressed="'+(s.vis ? 'true' : 'false')+'">'+(s.vis ? '表示' : '非表示')+'</button><button data-lock="'+l.id+'" aria-pressed="'+(s.lock ? 'true' : 'false')+'">'+(s.lock ? 'ロック' : '編集可')+'</button><span class="cnt">'+(cnt[l.id] || 0)+'</span></li>'; });
+  h += '</ul><div class="row"><button class="sb" id="lyAll">すべて表示</button><button class="sb" id="lyOnly">現在レイヤだけ表示</button><button class="sb" id="lyUnlock">ロックを全部解除</button></div>';
+  h += '<p class="note">非表示のレイヤは見えず、スナップもしません。ロックしたレイヤは見えてスナップもしますが、選択・編集できません。</p>';
+  $('#p-layer').innerHTML = h;
+  $$('[data-ly]', $('#p-layer')).forEach(b => b.addEventListener('click', () => setLayer(b.dataset.ly)));
+  $$('[data-vis]', $('#p-layer')).forEach(b => b.addEventListener('click', () => { const s = st.lay[b.dataset.vis]; s.vis = !s.vis; if(!s.vis) Array.from(sel).forEach(id => { const x = ent(id); if(x && x.layer === b.dataset.vis) sel.delete(id); }); save(); renderLayers(); renderEnts(); renderOverlays(); renderProps(); schedTut(); }));
+  $$('[data-lock]', $('#p-layer')).forEach(b => b.addEventListener('click', () => { const s = st.lay[b.dataset.lock]; s.lock = !s.lock; if(s.lock) Array.from(sel).forEach(id => { const x = ent(id); if(x && x.layer === b.dataset.lock) sel.delete(id); }); save(); renderLayers(); renderOverlays(); renderProps(); schedTut(); }));
+  $('#lyAll').addEventListener('click', () => { LAYERS.forEach(l => st.lay[l.id].vis = true); save(); renderLayers(); renderEnts(); });
+  $('#lyOnly').addEventListener('click', () => { LAYERS.forEach(l => st.lay[l.id].vis = l.id === st.layer); sel.clear(); save(); renderLayers(); renderEnts(); selChanged(); });
+  $('#lyUnlock').addEventListener('click', () => { LAYERS.forEach(l => st.lay[l.id].lock = false); save(); renderLayers(); });
+}
+
+/* ---- 設定 ---- */
+function renderSettings(){
+  const o = (k, cur, list) => '<select data-s="'+k+'">'+list.map(([v,l]) => '<option value="'+v+'"'+(String(cur) === String(v) ? ' selected' : '')+'>'+l+'</option>').join('')+'</select>';
+  $('#p-set').innerHTML =
+    '<h3>操作</h3>'+
+    '<label class="f">右クリック'+o('rclick', st.rclick, [['enter','確定（AutoCAD風）'],['jw','点の読み取り（Jw_cad風）']])+'<span></span></label>'+
+    '<label class="f">ホイール'+o('wheel', st.wheel, [['zoom','拡大縮小'],['pan','画面移動（タッチパッド向き）']])+'<span></span></label>'+
+    '<p class="note">ノートPCのタッチパッドで2本指スクロールを画面移動にしたいときは「画面移動」に。拡大縮小は2本指のピンチ（またはCtrl＋スクロール）でできます。</p>'+
+    '<h3>作図補助</h3>'+
+    '<label class="f">極の角度'+o('polarInc', st.polarInc, [[15,'15°ごと'],[30,'30°ごと'],[45,'45°ごと'],[90,'90°ごと']])+'<span></span></label>'+
+    '<label class="f">グリッド'+o('grid', st.grid, [[0,'表示しない'],[100,'100 mm'],[455,'455 mm'],[910,'910 mm（半間）'],[1820,'1,820 mm（1間）']])+'<span></span></label>'+
+    '<label class="f">文字の高さ'+o('th', st.th, [[250,'2.5 mm'],[350,'3.5 mm'],[500,'5 mm']])+'<span class="u">用紙上</span></label>'+
+    '<label class="f">寸法の置き場所'+o('dimAuto', st.dimAuto === false ? 0 : 1, [[1,'自動で「3 寸法」'],[0,'現在レイヤ']])+'<span></span></label>'+
+    '<h3>表示</h3>'+
+    '<label class="f">配色'+o('theme', st.theme, [['auto','端末に合わせる'],['light','明るい'],['dark','暗い']])+'<span></span></label>'+
+    '<h3>データ</h3><p class="note">図面と設定は、この端末のブラウザに自動保存されます。別の端末へは「ファイル」→「図面データを保存」で持ち運べます。</p>'+
+    '<div class="row"><button class="sb danger" id="sReset">設定を初期状態に戻す</button></div>';
+  $$('[data-s]', $('#p-set')).forEach(s => s.addEventListener('change', () => {
+    const k = s.dataset.s, v = s.value;
+    if(k === 'polarInc' || k === 'grid' || k === 'th') st[k] = +v; else if(k === 'dimAuto') st.dimAuto = v === '1'; else st[k] = v;
+    if(k === 'theme') applyTheme();
+    save(); renderBar(); renderStatic(); renderPrev();
+  }));
+  $('#sReset').addEventListener('click', () => { if(!confirm('設定（スナップ・レイヤ表示など）を初期状態に戻します。図面は消えません。')) return; const d = DEF_ST(); d.lesDone = st.lesDone; st = d; LAYERS.forEach(l => st.lay[l.id] = {vis:true, lock:false}); save(); applyTheme(); renderAll(); });
+}
+function applyTheme(){ const r = document.documentElement; if(st.theme === 'light' || st.theme === 'dark') r.setAttribute('data-theme', st.theme); else r.removeAttribute('data-theme'); }
+
+/* ================= ファイル ================= */
+function download(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); }
+function closeMenu(){ $('#mFile').open = false; }
+document.addEventListener('click', e => { const m = $('#mFile'); if(m.open && !m.contains(e.target)) m.open = false; });
+function exportSVG(){
+  const Wp = 2480, Hp = Math.round(Wp*PAPER.h/PAPER.w), k = PAPER.w/Wp;
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="'+Wp+'" height="'+Hp+'" viewBox="0 '+(-PAPER.h)+' '+PAPER.w+' '+PAPER.h+'">'+paperSVG(k,true)+titleSVG(k,true)+doc.ents.filter(visible).map(e => entSVG(e,k,true,null)).join('')+'</svg>';
+}
+$('#fPng').addEventListener('click', () => {
+  closeMenu(); const img = new Image();
+  img.onload = () => { const c = document.createElement('canvas'); c.width = img.width || 2480; c.height = img.height || 1754; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height);
+    c.toBlob(b => { if(b){ download(b, 'zumen-renshu.png'); ev.exp.png++; toast('PNG画像を保存しました（表示中のレイヤのみ）'); schedTut(); } else toast('画像を作れませんでした'); }, 'image/png'); };
+  img.onerror = () => toast('画像を作れませんでした');
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(exportSVG());
+});
+function dxfText(s){ let o = ''; for(const ch of String(s)){ const c = ch.codePointAt(0); o += c < 128 ? ch : (c < 0x10000 ? '\\U+'+c.toString(16).toUpperCase().padStart(4,'0') : '?'); } return o; }
+function buildDXF(){
+  const out = [], g = (c,v) => { out.push(String(c)); out.push(String(v)); };
+  const n = v => (Math.round(v*1000)/1000).toString();
+  g(0,'SECTION'); g(2,'HEADER'); g(9,'$ACADVER'); g(1,'AC1009'); g(9,'$EXTMIN'); g(10,0); g(20,0); g(9,'$EXTMAX'); g(10,PAPER.w); g(20,PAPER.h); g(0,'ENDSEC');
+  g(0,'SECTION'); g(2,'TABLES');
+  g(0,'TABLE'); g(2,'LTYPE'); g(70,1); g(0,'LTYPE'); g(2,'CONTINUOUS'); g(70,0); g(3,'Solid line'); g(72,65); g(73,0); g(40,0); g(0,'ENDTAB');
+  g(0,'TABLE'); g(2,'LAYER'); g(70,LAYERS.length); LAYERS.forEach(l => { g(0,'LAYER'); g(2,l.dxf); g(70,0); g(62,l.aci); g(6,'CONTINUOUS'); }); g(0,'ENDTAB');
+  g(0,'ENDSEC');
+  g(0,'SECTION'); g(2,'ENTITIES');
+  const line = (L,a,b) => { g(0,'LINE'); g(8,L); g(10,n(a.x)); g(20,n(a.y)); g(30,0); g(11,n(b.x)); g(21,n(b.y)); g(31,0); };
+  const text = (L,p,h,t,rot,center) => { g(0,'TEXT'); g(8,L); g(10,n(p.x)); g(20,n(p.y)); g(30,0); g(40,n(h)); g(1,dxfText(t)); if(rot) g(50,n(deg(rot))); if(center){ g(72,1); g(11,n(p.x)); g(21,n(p.y)); g(31,0); } };
+  doc.ents.filter(visible).forEach(e => {
+    const L = (LBY[e.layer] || LBY.wall).dxf;
+    if(e.type === 'line') line(L, P(e.x1,e.y1), P(e.x2,e.y2));
+    else if(e.type === 'pline'){ g(0,'POLYLINE'); g(8,L); g(66,1); g(10,0); g(20,0); g(30,0); g(70, e.closed ? 1 : 0); e.pts.forEach(q => { g(0,'VERTEX'); g(8,L); g(10,n(q[0])); g(20,n(q[1])); g(30,0); }); g(0,'SEQEND'); g(8,L); }
+    else if(e.type === 'circle'){ g(0,'CIRCLE'); g(8,L); g(10,n(e.cx)); g(20,n(e.cy)); g(30,0); g(40,n(e.r)); }
+    else if(e.type === 'arc'){ g(0,'ARC'); g(8,L); g(10,n(e.cx)); g(20,n(e.cy)); g(30,0); g(40,n(e.r)); g(50,n(deg(normA(e.a1)))); g(51,n(deg(normA(e.a1 + span(e))))); }
+    else if(e.type === 'text') text(L, P(e.x,e.y), e.h, e.t, e.rot || 0, false);
+    else if(e.type === 'dim'){ const d = dimGeom(e); line(L, d.p1, d.A); line(L, d.p2, d.B); line(L, d.A, d.B); text(L, d.tp, DIMH, e.ovr || fmtN(d.val), d.th, true); }
+    else if(e.type === 'photo'){ const c = P(e.x,e.y), dir = P(Math.cos(e.a), Math.sin(e.a)); g(0,'CIRCLE'); g(8,L); g(10,n(c.x)); g(20,n(c.y)); g(30,0); g(40,180); const tip = add(c, mul(dir,720)), b = sub(tip, mul(dir,200)), pr = lnorm(dir); line(L, add(c, mul(dir,180)), tip); line(L, tip, add(b, mul(pr,90))); line(L, tip, sub(b, mul(pr,90))); text(L, P(c.x, c.y), 200, e.n, 0, true); }
+  });
+  g(0,'ENDSEC'); g(0,'EOF');
+  return out.join('\r\n') + '\r\n';
+}
+$('#fDxf').addEventListener('click', () => { closeMenu(); download(new Blob([buildDXF()], {type:'application/dxf'}), 'zumen-renshu.dxf'); ev.exp.dxf++; toast('DXFを書き出しました（単位mm・実寸）'); schedTut(); });
+$('#fJson').addEventListener('click', () => { closeMenu(); download(new Blob([JSON.stringify(doc)], {type:'application/json'}), 'zumen-renshu.json'); ev.exp.json++; toast('図面データを保存しました'); schedTut(); });
+$('#fOpen').addEventListener('change', e => {
+  closeMenu(); const f = e.target.files && e.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { try{ let d = JSON.parse(rd.result); if(d && Array.isArray(d.shapes)) d = migrateV1(d); if(!d || !Array.isArray(d.ents)) throw 0;
+      d.next = d.next || (d.ents.reduce((m,x) => Math.max(m, x.id || 0), 0) + 1); d.photoNo = d.photoNo || 1;
+      commit(() => { doc = d; }); sel.clear(); selChanged(); fitAll(true); toast('図面データを開きました'); }
+    catch(err){ toast('このファイルは図面データとして読めません'); } e.target.value = ''; };
+  rd.readAsText(f);
+});
+$('#fNew').addEventListener('click', () => { closeMenu(); if(!confirm('図面を白紙にします。「戻す」で元に戻せます。')) return; commit(() => { doc = {v:3, ents:[], next:1, photoNo:1}; }); sel.clear(); selChanged(); toast('新しい図面にしました'); });
+
+/* ================= 練習（チュートリアル） ================= */
+function R(x0,y0,w,h,layer){ return {type:'pline', layer, closed:true, pts:[[x0,y0],[x0+w,y0],[x0+w,y0+h],[x0,y0+h]]}; }
+function Ln(x1,y1,x2,y2,layer){ return {type:'line', layer, x1, y1, x2, y2}; }
+function Tx(x,y,t,layer,h){ return {type:'text', layer, x, y, t, h:h || 300, rot:0}; }
+function mkDoc(list, photoNo){ list.forEach((e,i) => e.id = i+1); return {v:3, ents:list, next:list.length+1, photoNo:photoNo || 1}; }
+const of = (type, layer) => doc.ents.filter(e => e.type === type && (!layer || e.layer === layer));
+const rects = layer => of('pline', layer).map(e => Object.assign({e}, rectInfo(e) || {})).filter(r => r.w);
+const hasRect = (w, h, layer) => rects(layer).some(r => (near(r.w,w) && near(r.h,h)) || (near(r.w,h) && near(r.h,w)));
+const isLine = (e, a, b) => (ptEq(P(e.x1,e.y1),a) && ptEq(P(e.x2,e.y2),b)) || (ptEq(P(e.x1,e.y1),b) && ptEq(P(e.x2,e.y2),a));
+const hasLine = (a, b) => of('line').some(e => isLine(e, a, b));
+const hz = (e, L) => near(e.y1, e.y2) && near(Math.abs(e.x2 - e.x1), L);
+const vt = (e, L) => near(e.x1, e.x2) && near(Math.abs(e.y2 - e.y1), L);
+const dimVals = layer => of('dim', layer).map(e => dimGeom(e).val);
+const ROOM = () => [R(6000,10000,3640,2730,'wall'), Tx(6000,13200,'6畳の部屋（3,640×2,730）','text',300)];
+const LES = [
+ {id:'l1', t:'画面の操作に慣れる', goal:'拡大・縮小・移動と、線を1本引いて元に戻すまで。', prep:null,
+  steps:[
+   {t:'拡大・縮小する', h:'マウス：ホイール／ノートPC：2本指でピンチ（Ctrl＋スクロールでも）／iPhone：2本指でピンチ。右下の＋－でもできます。', hl:'.zoom', chk:b => ev.zoom > b.zoom},
+   {t:'画面を動かす（パン）', h:'マウス：中ボタン（または右ボタン）でドラッグ／iPhone：2本指でドラッグ／右下の「手」をオンにしてドラッグ。', hl:'#bHand', chk:b => ev.pan > b.pan},
+   {t:'右下の「全体」で図面全体を表示する', h:'迷子になったら、いつでも「全体」。', hl:'#zFit', chk:b => ev.fit > b.fit},
+   {t:'「描く」→「線」で、好きな線を1本引く', h:'始点をクリック → 終点をクリック → Enter（または右クリック、上の「確定」）で終了。iPhoneは指を置くとルーペが出るので、位置を合わせて指を離します。', hl:'[data-c="LINE"]', chk:b => of('line').length > b.lines},
+   {t:'上の「戻す」で、今の線を消す', h:'Ctrl＋Z でも戻せます。「やり直し」で再び出せます。', hl:'#bUndo', chk:b => ev.undo > b.undo}
+  ]},
+ {id:'l2', t:'長さを指定して線を引く', goal:'数値入力で正確な長さ・角度の線を引く（AutoCADの直接距離入力・相対座標・極座標）。', prep:() => mkDoc([]),
+  steps:[
+   {t:'下のバーで「現在レイヤ」を「1 壁」にする', h:'これから描く線は「1 壁」レイヤに入ります。', hl:'#curLayer', chk:() => st.layer === 'wall'},
+   {t:'「線」で始点をクリックし、カーソルを右に向けたまま 1820 と入力して確定', h:'緑の点線（極トラッキング）が出たら、その方向に吸い付いています。数値はキーボード、または上の「数値」のテンキーで。', hl:'[data-c="LINE"]', chk:() => of('line','wall').some(e => hz(e,1820))},
+   {t:'続けて、カーソルを上に向けて 910 と入力して確定', h:'線は続けて引けます（直前の終点が次の始点）。', chk:() => of('line','wall').some(v => vt(v,910) && of('line','wall').some(h => hz(h,1820) && (ptEq(P(v.x1,v.y1),P(h.x2,h.y2)) || ptEq(P(v.x2,v.y2),P(h.x2,h.y2)) || ptEq(P(v.x1,v.y1),P(h.x1,h.y1)) || ptEq(P(v.x2,v.y2),P(h.x1,h.y1)))))},
+   {t:'続けて -1820,0 と入力して確定（左へ1,820）', h:'2点目からの「X,Y」は、直前の点からの相対座標になります（@を付けても同じ）。', chk:() => of('line','wall').filter(e => hz(e,1820)).length >= 2},
+   {t:'上の「閉じる」ボタンで、最初の点まで線を引いて終了', h:'四角が閉じれば完成です。', chk:() => of('line','wall').filter(e => vt(e,910)).length >= 2},
+   {t:'新しく「線」を始め、始点をクリックして 1000<45 と入力（45°で1,000）', h:'「長さ<角度」は極座標。角度は右が0°、反時計回りが＋です。', chk:() => of('line').some(e => near(Math.abs(e.x2-e.x1),707.107,0.6) && near(Math.abs(e.y2-e.y1),707.107,0.6) && Math.sign(e.x2-e.x1) === Math.sign(e.y2-e.y1))}
+  ]},
+ {id:'l3', t:'矩形で6畳の部屋を描く', goal:'6畳間（3,640×2,730mm・柱の芯から芯）を2通りの方法で描く。', prep:() => mkDoc([]),
+  steps:[
+   {t:'現在レイヤを「1 壁」にする', hl:'#curLayer', chk:() => st.layer === 'wall'},
+   {t:'「矩形」で1つ目の角をクリックし、3640,2730 と入力して確定', h:'2つ目の角の「幅,高さ」は1つ目の角からの相対座標です。', hl:'[data-c="RECT"]', chk:() => hasRect(3640,2730,'wall')},
+   {t:'もう1つ：「矩形」→ 角をクリック →「寸法で指定」→ 幅 3640 → 高さ 2730 → 置く向きをクリック', h:'寸法から決める方法。テンキーが出たら数値を入れて確定。', chk:() => rects('wall').filter(r => (near(r.w,3640) && near(r.h,2730)) || (near(r.w,2730) && near(r.h,3640))).length >= 2}
+  ]},
+ {id:'l4', t:'スナップで正確につなぐ', goal:'端点・中点・交点・垂線のスナップで、図形どうしをぴったりつなぐ。', prep:() => mkDoc(ROOM()),
+  steps:[
+   {t:'下のバーで「スナップ」「端点」「中点」「交点」「垂線」がオンになっているのを確かめる', h:'緑色（オン）の状態にします。', hl:'#bar', chk:() => st.osOn && st.os.end && st.os.mid && st.os.int && st.os.per},
+   {t:'「線」で、部屋の左下の角から右上の角へ対角線を引く', h:'角に近づくと□（端点）マークが出ます。', hl:'[data-c="LINE"]', chk:() => hasLine(P(6000,10000), P(9640,12730))},
+   {t:'左の辺の中点から、右の辺の中点へ線を引く', h:'辺の真ん中に近づくと△（中点）。', chk:() => hasLine(P(6000,11365), P(9640,11365))},
+   {t:'2本の線が交わる点から、上の辺へ垂直に線を引く', h:'×（交点）をクリック → 上の辺に近づけて⊥（垂線）が出たらクリック。', chk:() => hasLine(P(7820,11365), P(7820,12730))}
+  ]},
+ {id:'l5', t:'オフセットで壁の厚みを描く', goal:'通り芯（柱の芯）から両側に60mmずつ広げて、壁厚120mmの線を描く。', prep:() => mkDoc([R(6000,10000,3640,2730,'grid'), Tx(6000,13300,'通り芯（3,640×2,730）から壁厚120mmの壁を描く','text',300)]),
+  steps:[
+   {t:'「修正」→「オフセット」を選び、距離 60 を入力して確定', hl:'[data-c="OFFSET"]', chk:() => st.offD === 60 && ((C && C.name === 'OFFSET' && C.d.step !== 'd') || hasRect(3760,2850))},
+   {t:'通り芯の四角をクリックし、その外側をクリック', h:'外側に60mm広い四角（3,760×2,850）ができます。', chk:() => hasRect(3760,2850)},
+   {t:'もう一度、通り芯の四角をクリックし、内側をクリック → Enterで終了', h:'内側に3,520×2,610の四角ができます。', chk:() => hasRect(3520,2610)},
+   {t:'できた2つの四角を選び、プロパティでレイヤを「1 壁」にする', h:'オフセットは元の図形のレイヤに作られます（上のボタンで「現在レイヤ」にも切替可）。Shiftを押しながら、またはタップで追加選択。', hl:'.stabs [data-p="prop"]', chk:() => hasRect(3760,2850,'wall') && hasRect(3520,2610,'wall')}
+  ]},
+ {id:'l6', t:'トリム・延長・コーナー', goal:'はみ出た線を切る、足りない線を延ばす、2本の線で角を作る。', prep:() => mkDoc([
+    Ln(2000,20000,8000,20000,'wall'), Ln(5000,17000,5000,23000,'wall'), Tx(2000,24200,'① トリム：縦線の、横線より上を切る','text',350),
+    Ln(14000,17000,14000,23000,'wall'), Ln(10000,20000,12500,20000,'wall'), Tx(10000,24200,'② 延長：短い線を右の線まで延ばす','text',350),
+    Ln(17000,17000,17000,21500,'wall'), Ln(17800,22500,22000,22500,'wall'), Tx(17000,24200,'③ コーナー：2本で角を作る','text',350)]),
+  steps:[
+   {t:'「トリム」で、①の縦線の「横線より上」の部分をクリック → Enter', h:'交わる図形がすべて境界になります（AutoCADのクイックモードと同じ）。', hl:'[data-c="TRIM"]', chk:() => hasLine(P(5000,17000), P(5000,20000)) && !of('line').some(e => near(e.x1,5000) && near(e.x2,5000) && Math.max(e.y1,e.y2) > 20000.5)},
+   {t:'「延長」で、②の短い横線の「右端の近く」をクリック → Enter', hl:'[data-c="EXTEND"]', chk:() => hasLine(P(10000,20000), P(14000,20000))},
+   {t:'「コーナー」で、③の縦線と横線を順にクリック', h:'線の「残したい側」をクリックします。', hl:'[data-c="CORNER"]', chk:() => hasLine(P(17000,17000), P(17000,22500)) && hasLine(P(17000,22500), P(22000,22500))}
+  ]},
+ {id:'l7', t:'寸法を入れる', goal:'部屋の幅と奥行の寸法を入れ、寸法の値を確かめる。', prep:() => mkDoc(ROOM()),
+  steps:[
+   {t:'「寸法」で、下の辺の左端と右端をクリックし、辺の下側をクリック', h:'端点スナップ（□）でつかむと正確です。寸法は自動で「3 寸法」レイヤに入ります。', hl:'[data-c="DIM"]', chk:() => dimVals('dim').some(v => near(v,3640))},
+   {t:'同じように、左の辺に 2,730 の寸法を入れる（辺の左側に置く）', chk:() => dimVals('dim').some(v => near(v,2730))},
+   {t:'寸法をクリックして選び、右の「プロパティ」で値を確かめる', h:'「表示の文字」で値の書き換え（上書き）もできます。', hl:'.stabs [data-p="prop"]', chk:() => Array.from(sel).some(id => ent(id) && ent(id).type === 'dim')}
+  ]},
+ {id:'l8', t:'面積と距離を測る', goal:'部屋の面積を測り、算定要領の端数処理で答える。', prep:() => mkDoc(ROOM()),
+  steps:[
+   {t:'「測る」→「面積」で、部屋の四角をクリック', hl:'[data-c="AREA"]', chk:() => ev.area && near(ev.area.m2, 9.9372, 1e-4)},
+   {t:'結果の値を、小数第2位まで（第3位切捨て）で答える', h:'右の「プロパティ」上部に結果が出ています。', input:'9.93'},
+   {t:'「距離」で、部屋の左下の角から右上の角までを測る', h:'3,640と2,730の直角三角形の斜辺は 4,550 になります。', hl:'[data-c="DIST"]', chk:() => ev.dist && near(ev.dist, 4550, 0.6)}
+  ]},
+ {id:'l9', t:'移動・複写・回転・鏡像', goal:'机（900×600）を例に、図形を動かす・増やす・回す・反転する。', prep:() => mkDoc([R(6000,10000,900,600,'door'), Tx(6000,9400,'机 900×600','text',250)]),
+  steps:[
+   {t:'机の四角を選び、「移動」→ 基点に左下の角 → 1820,0 と入力', h:'選んでからコマンドを押しても、コマンドを押してから選んでもOK。', hl:'[data-c="MOVE"]', chk:() => rects('door').some(r => near(r.w,900) && near(r.h,600) && near(r.x0,7820) && near(r.y0,10000))},
+   {t:'「複写」で、その机を上に 1000 複写する（0,1000 と入力）→ Enter', hl:'[data-c="COPY"]', chk:() => rects('door').some(r => near(r.w,900) && near(r.h,600) && near(r.x0,7820) && near(r.y0,11000))},
+   {t:'どちらか1つを選び、「回転」→ 基点に角 → 90 と入力', h:'反時計回りが＋。上の「90°」ボタンでも。', hl:'[data-c="ROTATE"]', chk:() => rects('door').some(r => near(r.w,600) && near(r.h,900))},
+   {t:'どれか1つを選び、「鏡像」で縦の軸を指定して「残す」', h:'軸の2点を指定 →「残す（Enter）」。', hl:'[data-c="MIRROR"]', chk:b => (ev.done.MIRROR || 0) > (b.done.MIRROR || 0) && rects('door').filter(r => (near(r.w,900) && near(r.h,600)) || (near(r.w,600) && near(r.h,900))).length >= 3}
+  ]},
+ {id:'l10', t:'補償の図面：撮影位置・損傷・注記', goal:'事前調査の平面図に、撮影位置と損傷、注記を記入する。', prep:() => mkDoc(ROOM()),
+  steps:[
+   {t:'「補償」→「撮影」で、部屋の角から内側を向けて撮影位置を1つ置く', h:'立ち位置をクリック → 向ける方向をクリック。番号は自動で振られ、「6 写真」レイヤに入ります。', hl:'[data-c="PHOTO"]', chk:() => of('photo').length >= 1},
+   {t:'撮影位置を全部で4つ（四隅から）にする → Enter', chk:() => of('photo').length >= 4},
+   {t:'「損傷線」で亀裂を折れ線で描き、Enterで確定', h:'点を順にクリック。「5 損傷」レイヤに入ります。', hl:'[data-c="DMG"]', chk:() => of('pline','dmg').length >= 1},
+   {t:'現在レイヤを「4 文字」にして「文字」で 亀裂 W0.5mm L30cm と書く', h:'損傷名と程度（幅はmm・長さはcm）を書きます。', hl:'[data-c="TEXT"]', chk:() => of('text','text').some(e => e.t.indexOf('亀裂') >= 0 && e.t !== '亀裂 W0.3mm L25cm')}
+  ]},
+ {id:'l11', t:'図面修正（実務の練習）', goal:'現地で測り直したら、部屋の幅は3,460ではなく3,640mmだった。図面を直す。', prep:() => mkDoc([
+    R(6000,10000,3460,2730,'wall'),
+    {type:'dim', layer:'dim', x1:6000, y1:10000, x2:9460, y2:10000, mode:'h', off:9100, ovr:''},
+    {type:'dim', layer:'dim', x1:6000, y1:10000, x2:6000, y2:12730, mode:'v', off:5100, ovr:''},
+    Tx(6900,11250,'洋室（6畳）','wall',300), Tx(6000,13100,'外壁：サイディング','wall',300),
+    {type:'photo', layer:'photo', x:6320, y:10320, a:PI/4, n:'1'}, {type:'photo', layer:'photo', x:9140, y:12410, a:-3*PI/4, n:'2'},
+    {type:'pline', layer:'dmg', closed:false, pts:[[7600,12730],[7740,12460],[7650,12220],[7820,11960]]}, Tx(7950,12050,'亀裂 W0.3mm L25cm','text',250)], 3),
+  steps:[
+   {t:'部屋の四角を選び、プロパティで「幅」を 3640 にする', h:'左下の角は固定されます。右側の角のグリップを動かす方法もあります。', hl:'.stabs [data-p="prop"]', chk:() => hasRect(3640,2730,'wall') && !rects().some(r => near(r.w,3460))},
+   {t:'3,460 の寸法を消して、3,640 の寸法を入れ直す', h:'寸法は図形と連動しません。選んで「削除」→「寸法」で入れ直します。', chk:() => dimVals().some(v => near(v,3640)) && !dimVals().some(v => near(v,3460))},
+   {t:'「洋室（6畳）」「外壁：サイディング」の文字を「4 文字」レイヤに移す', h:'レイヤタブで「現在レイヤだけ表示」（現在＝1 壁）にすると、壁レイヤに入っている物が分かります。', hl:'.stabs [data-p="layer"]', chk:() => { const ts = of('text').filter(e => e.t === '洋室（6畳）' || e.t === '外壁：サイディング'); return ts.length >= 2 && ts.every(e => e.layer === 'text'); }},
+   {t:'レイヤタブで「1 壁」をロックして、壁が選べなくなるのを確かめる', h:'ロックしても見えるしスナップもします。大事な線を誤って動かさないための機能です。', hl:'.stabs [data-p="layer"]', chk:() => st.lay.wall.lock}
+  ]},
+ {id:'l12', t:'保存と書き出し', goal:'図面を画像・DXF・データで保存する。', prep:null,
+  steps:[
+   {t:'「ファイル」→「PNG画像で保存」', h:'A3・1/100の用紙ごと画像になります。', hl:'#mFile', chk:b => ev.exp.png > b.exp.png},
+   {t:'「ファイル」→「DXFで書き出す」', h:'AutoCADやJw_cadなどで開ける形式です（説明書「保存と書き出し」）。', hl:'#mFile', chk:b => ev.exp.dxf > b.exp.dxf},
+   {t:'「ファイル」→「図面データを保存」', h:'このアプリで続きを描くためのデータ。iPhoneとパソコンの間で持ち運べます。', hl:'#mFile', chk:b => ev.exp.json > b.exp.json}
+  ]}
+];
+let tut = {id:null, step:0, b:null};
+function snapEv(){ return {zoom:ev.zoom, pan:ev.pan, fit:ev.fit, undo:ev.undo, lines:of('line').length, exp:Object.assign({}, ev.exp), done:Object.assign({}, ev.done)}; }
+function startLesson(id, noPrep){
+  const L = LES.find(x => x.id === id); if(!L) return;
+  if(L.prep && !noPrep){
+    if(doc.ents.length && !confirm('レッスン用の図面に入れ替えます（今の図面は「戻す」で戻せます）。よろしいですか？')) return;
+    if(C) cancelCmd(true);
+    commit(() => { doc = L.prep(); }); sel.clear(); selChanged();
+  }
+  tut = {id, step:0, b:snapEv()}; ev.area = null; ev.dist = null;
+  if(isWide()) showSide('learn'); else { st.side = 'learn'; setSideOpen(false); }
+  renderLearn(); checkTut();
+  if(L.prep && !noPrep) requestAnimationFrame(() => fitAll(true));
+  if($('#manual').open) $('#manual').close();
+  if(!isWide()) toast('下の帯に手順が出ます。「手順」で詳しい説明を開けます', 3500);
+}
+let tutT = null;
+function schedTut(){ clearTimeout(tutT); tutT = setTimeout(checkTut, 120); }
+function checkTut(){
+  if(!tut.id) return;
+  const L = LES.find(x => x.id === tut.id); let moved = false;
+  while(tut.step < L.steps.length){ const s = L.steps[tut.step]; if(s.input) break; let ok = false; try{ ok = !!s.chk(tut.b); }catch(err){} if(!ok) break; tut.step++; moved = true; }
+  if(moved){ if(tut.step >= L.steps.length){ st.lesDone[L.id] = 1; save(); toast('レッスン「'+L.t+'」完了。おつかれさまでした', 4000); } else toast('できました。次へ進みます', 1600); }
+  renderLearn();
+}
+function renderLesBar(){
+  const bar = $('#lesBar'); if(!bar) return;
+  const L = tut.id ? LES.find(x => x.id === tut.id) : null;
+  const learnVisible = st.sideOpen && st.side === 'learn';
+  if(!L || learnVisible){ bar.hidden = true; $('#stage').classList.remove('has-les'); return; }
+  $('#stage').classList.add('has-les');
+  const i = LES.indexOf(L), fin = tut.step >= L.steps.length, s = L.steps[tut.step];
+  bar.innerHTML = '<div class="lt">'+(fin ? '<b>練習'+(i+1)+'</b>完了しました' : '<b>練習'+(i+1)+'｜'+(tut.step+1)+'/'+L.steps.length+'</b>'+esc(s.t)+(s.h && !st.lbMin ? '<small>'+esc(s.h)+'</small>' : ''))+'</div><button id="lbOpen">手順</button><button id="lbClose" aria-label="練習を閉じる">×</button>';
+  bar.hidden = false;
+  $('#lbOpen').addEventListener('click', () => showSide('learn'));
+  $('.lt', bar).addEventListener('click', () => { st.lbMin = !st.lbMin; save(); renderLesBar(); });
+  $('#lbClose').addEventListener('click', () => { tut = {id:null, step:0, b:null}; renderLearn(); });
+}
+function renderLearn(){
+  const box = $('#p-learn'); $$('.hl').forEach(x => x.classList.remove('hl'));
+  renderLesBar();
+  if(!tut.id){
+    const done = LES.filter(l => st.lesDone[l.id]).length;
+    box.innerHTML = '<h3>練習（チュートリアル）</h3><p class="note">説明書で読んだ操作を、実際の画面で1つずつ練習します。手順ができると自動でチェックが付きます。上から順に進めるのがおすすめです（'+done+'／'+LES.length+'完了）。</p><ul class="les">'+
+      LES.map((l,i) => '<li><button data-les="'+l.id+'"><span class="no">'+(i+1)+'</span><span>'+esc(l.t)+'</span><span class="st'+(st.lesDone[l.id] ? ' ok' : '')+'">'+(st.lesDone[l.id] ? '済' : '未')+'</span></button></li>').join('')+'</ul>'+
+      '<div class="row"><button class="sb" id="openMan">説明書を開く</button></div>';
+    $$('[data-les]', box).forEach(b => b.addEventListener('click', () => startLesson(b.dataset.les)));
+    $('#openMan').addEventListener('click', () => openManual());
+    return;
+  }
+  const L = LES.find(x => x.id === tut.id), i = LES.indexOf(L), fin = tut.step >= L.steps.length;
+  let h = '<p class="note" style="margin:0">レッスン '+(i+1)+'／'+LES.length+'</p><h3 style="margin-top:2px">'+esc(L.t)+'</h3><p class="note">'+esc(L.goal)+'</p><ol class="steps">';
+  L.steps.forEach((s,j) => {
+    const cls = j < tut.step ? 'ok' : j === tut.step ? 'now' : '';
+    h += '<li class="'+cls+'">'+esc(s.t)+(s.h && j === tut.step ? '<span class="h">'+esc(s.h)+'</span>' : '')+
+      (s.input && j === tut.step ? '<div class="row"><input id="tutIn" type="text" inputmode="decimal" placeholder="例 0.00" aria-label="答え"><span class="note" style="align-self:center">㎡</span><button class="sb go" id="tutChk">判定</button></div><span class="h" id="tutRes"></span>' : '')+'</li>';
+  });
+  h += '</ol>';
+  if(fin) h += '<div class="box"><b>完了しました。</b>'+(LES[i+1] ? '次は「'+esc(LES[i+1].t)+'」です。' : 'すべてのレッスンが終わりました。')+'</div>';
+  h += '<div class="row">'+(fin && LES[i+1] ? '<button class="sb go" id="tutNext">次のレッスンへ</button>' : '')+'<button class="sb" id="tutRe">最初からやり直す</button><button class="sb" id="tutList">一覧に戻る</button></div>';
+  box.innerHTML = h;
+  const s = L.steps[tut.step];
+  if(s && s.hl){
+    const m = s.hl.match(/data-c="([A-Z]+)"/);
+    if(m && GROUPS[st.g].indexOf(m[1]) < 0){ const g = Object.keys(GROUPS).find(k => GROUPS[k].indexOf(m[1]) >= 0); if(g){ st.g = g; save(); renderTools(); } }
+    $$(s.hl).forEach(x => x.classList.add('hl'));
+  }
+  if(s && s.input){ const chk = () => { const v = toHalf($('#tutIn').value.trim()); if(v === s.input || near(parseFloat(v), parseFloat(s.input), 1e-6)){ tut.step++; toast('正解です', 1600); checkTut(); } else { $('#tutRes').textContent = near(parseFloat(v), 9.94, 1e-6) ? '四捨五入ではなく、小数第3位を「切り捨て」ます。' : 'もう一度。9.9372 を小数第2位まで（第3位切捨て）にします。'; } };
+    $('#tutChk').addEventListener('click', chk); $('#tutIn').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); chk(); } }); }
+  const nx = $('#tutNext'); if(nx) nx.addEventListener('click', () => startLesson(LES[i+1].id));
+  $('#tutRe').addEventListener('click', () => startLesson(L.id));
+  $('#tutList').addEventListener('click', () => { tut = {id:null, step:0, b:null}; renderLearn(); });
+}
+
+/* ================= 説明書 ================= */
+const MAN = [
+ {id:'m1', t:'1. はじめに（画面の見方）', les:'l1', h:`
+<p>このアプリは、補償コンサルタントの図面（事前・事後調査の平面図など）を想定した、CADの練習用ソフトです。大手CADソフト（AutoCAD、Jw_cadなど）と同じ考え方で操作できるようにしてあり、ここで覚えた操作はほかのCADでもそのまま役立ちます。</p>
+<h3>画面の5つの場所</h3>
+<div class="tw"><table><tr><th>場所</th><th>役割</th></tr>
+<tr><td>上：コマンドライン</td><td>今のコマンドと、次に何をすればよいか（プロンプト）が出ます。右の入力欄に数値やコマンドを入れて「確定」。</td></tr>
+<tr><td>左：ツール</td><td>「描く」「修正」「測る」「補償」の4つに分かれたコマンドのボタン。</td></tr>
+<tr><td>中央：作図エリア</td><td>A3の用紙が縮尺1/100で置いてあります。数字はすべて実物の長さ（mm）です。</td></tr>
+<tr><td>右：パネル</td><td>プロパティ（選んだ図形の数値）、レイヤ、練習、設定。スマホでは「パネル」ボタンで開閉します。</td></tr>
+<tr><td>下：ステータスバー</td><td>スナップ・直交・極トラッキングのオン／オフ、現在レイヤ、カーソルの座標。</td></tr></table></div>
+<div class="tipbox">迷ったら：上の<b>取消</b>（Esc）で今の操作をやめ、<b>戻す</b>（Ctrl＋Z）で1つ前に戻れます。右下の<b>全体</b>で図面全体が見えます。</div>`},
+ {id:'m2', t:'2. CADの基本の考え方', h:`
+<h3>実寸で描く</h3><p>CADでは、紙に合わせて縮めて描くのではなく、<b>実物の大きさ（mm）でそのまま描きます</b>。3,640mmの壁は3640と入力します。縮尺（1/100）は、用紙に収めて表示・印刷するときの倍率です。このアプリの用紙はA3（420×297mm）なので、実寸で42m×29.7mまで描けます。</p>
+<h3>座標</h3><p>用紙の左下が原点（0,0）。右がX、上がYのプラスです。角度は<b>右が0°、上が90°、反時計回りがプラス</b>です（AutoCADと同じ）。</p>
+<h3>レイヤ</h3><p>図形を種類ごとに分けて入れる透明なシートです。壁は「1 壁」、寸法は「3 寸法」のように分けると、表示・印刷の切替や、ほかの人の修正がしやすくなります。描く前に「現在レイヤ」を確かめる習慣をつけましょう。</p>
+<h3>図形の種類</h3><p>線・ポリライン（つながった折れ線。矩形もこれ）・円・円弧・文字・寸法・撮影位置があります。</p>`},
+ {id:'m3', t:'3. 画面の操作（機器別）', les:'l1', h:`
+<div class="tw"><table><tr><th>操作</th><th>マウス</th><th>ノートPC（タッチパッド）</th><th>iPhone（横向き）</th></tr>
+<tr><td>点を指定・選ぶ</td><td>左クリック</td><td>クリック</td><td>指を置く → ルーペで位置を合わせて離す</td></tr>
+<tr><td>拡大・縮小</td><td>ホイール</td><td>2本指でピンチ（Ctrl＋2本指スクロールでも）</td><td>2本指でピンチ</td></tr>
+<tr><td>画面を動かす</td><td>中ボタン・右ボタンでドラッグ</td><td>右下の「手」をオンにしてドラッグ（設定でスクロール＝画面移動にもできる）</td><td>2本指でドラッグ</td></tr>
+<tr><td>確定（Enter）</td><td>右クリック・Enter・Space</td><td>Enter・2本指クリック</td><td>上の「確定」</td></tr>
+<tr><td>取消（Esc）</td><td>Esc</td><td>Esc</td><td>上の「取消」</td></tr>
+<tr><td>数値を入れる</td><td colspan="2">そのままキーボードで打つ（入力欄を押さなくてよい）</td><td>上の「数値」でテンキーを出す</td></tr></table></div>
+<div class="tipbox">iPhoneのルーペは、AutoCADのモバイル版やARES Touchなど、スマホ向けCADと同じ仕組みです。指で隠れる部分を拡大して見せるので、端点などにぴったり合わせられます。</div>
+<p>右クリックの動作は「設定」で、AutoCAD風（確定）とJw_cad風（点の読み取り）を切り替えられます。</p>`},
+ {id:'m4', t:'4. 点の指定とスナップ', les:'l4', h:`
+<p>CADで一番大事なのは、<b>点を正確に指定すること</b>です。カーソルを図形に近づけると、決まった点に自動で吸い付きます（オブジェクトスナップ）。</p>
+<div class="tw"><table><tr><th>マーク</th><th>名前</th><th>吸い付く所</th></tr>
+<tr><td>□</td><td>端点</td><td>線の端、矩形の角、ポリラインの頂点</td></tr>
+<tr><td>△</td><td>中点</td><td>線・辺の真ん中</td></tr>
+<tr><td>×</td><td>交点</td><td>2つの図形が交わる点</td></tr>
+<tr><td>○</td><td>中心</td><td>円・円弧の中心（円周に近づけても出ます）</td></tr>
+<tr><td>⊥</td><td>垂線</td><td>直前の点から、図形へ垂直に下ろした点</td></tr>
+<tr><td>⧖</td><td>近接点</td><td>図形の上のいちばん近い点（初期はオフ）</td></tr></table></div>
+<h3>直交と極トラッキング</h3><p><b>直交</b>（F8）をオンにすると、水平・垂直にしか描けなくなります。<b>極トラッキング</b>（F10）は、45°ごと（設定で変更）の方向に近づくと緑の点線が出て吸い付きます。どちらも「次の点」の向きを決める補助です。</p>
+<h3>グリッド</h3><p>点の格子です。「グリッド」をオンにすると格子に吸い付きます（910mm＝半間など、設定で間隔を変更）。</p>`},
+ {id:'m5', t:'5. 数値で正確に描く', les:'l2', h:`
+<p>寸法が決まっている線は、クリックではなく数値で描きます。入力欄に打って「確定」（Enter）。</p>
+<div class="tw"><table><tr><th>入力</th><th>意味</th><th>例</th></tr>
+<tr><td><code>1820</code></td><td>カーソルの方向に1,820（直接距離入力）</td><td>右に向けて1820 → 右へ1,820の線</td></tr>
+<tr><td><code>3640,2730</code></td><td>1点目：原点からの位置／2点目以降：直前の点から右へ3,640・上へ2,730</td><td>矩形の2つ目の角</td></tr>
+<tr><td><code>@1820,0</code></td><td>直前の点からの相対座標（@はあってもなくても同じ）</td><td>右へ1,820</td></tr>
+<tr><td><code>#0,0</code></td><td>2点目以降で、原点からの位置（絶対座標）を指定</td><td>原点へ戻る</td></tr>
+<tr><td><code>1000&lt;45</code></td><td>長さ1,000・角度45°（極座標）</td><td>斜め45°の線</td></tr>
+<tr><td><code>-1820,0</code></td><td>左へ1,820（マイナスは左・下）</td><td>四角を閉じる</td></tr></table></div>
+<p>この「2点目以降は相対座標」というルールは、AutoCADのダイナミック入力の考え方と同じです。全角の数字や「、」で入れても大丈夫です。</p>`},
+ {id:'m6', t:'6. 描くコマンド', les:'l3', h:`
+<div class="tw"><table><tr><th>ボタン</th><th>入力</th><th>手順</th></tr>
+<tr><td>線</td><td>L</td><td>始点 → 次の点 → 次の点…（つながる線を続けて描ける）→ Enterで終了。「閉じる」で始点へ戻る。「1つ戻す」で1本取り消し。</td></tr>
+<tr><td>ポリライン</td><td>PL</td><td>点を順に指定 → Enterで確定。1つの図形としてまとまる。「閉じる」で閉じた図形に。</td></tr>
+<tr><td>矩形</td><td>REC</td><td>1つ目の角 → もう1つの角（例 3640,2730）。または「寸法で指定」→ 幅 → 高さ → 置く向き。</td></tr>
+<tr><td>円</td><td>C</td><td>中心 → 半径（数値または点）。「直径で指定する」も可。</td></tr>
+<tr><td>円弧</td><td>A</td><td>中心 → 始点（半径が決まる）→ 終点の方向（反時計回り）。「向きを反対にする」で時計回り。</td></tr>
+<tr><td>文字</td><td>T</td><td>位置（文字の左下）→ 文字を入力して確定。高さは用紙上2.5／3.5／5mm。</td></tr>
+<tr><td>寸法</td><td>DIM</td><td>1点目 → 2点目 → 寸法線の位置。「自動」は置く位置で水平・垂直を判断。「平行」は斜めの長さ。</td></tr></table></div>`},
+ {id:'m7', t:'7. 選択とグリップ', les:'l7', h:`
+<h3>選び方</h3><ul><li><b>クリック（タップ）</b>：その図形を選ぶ。もう一度クリックで解除。Shift＋クリックで解除。</li>
+<li><b>窓選択</b>：左から右へ囲む（青い枠）。枠にすっぽり入った図形だけ選ばれます。</li>
+<li><b>交差選択</b>：右から左へ囲む（緑の点線の枠）。枠に触れた図形も選ばれます。</li>
+<li>Ctrl＋A ですべて選択、Esc で選択解除。ロック中のレイヤの図形は選べません。</li></ul>
+<h3>グリップ</h3><p>選んだ図形に出る青い四角です。つかんでドラッグ（またはクリックしてから移動先をクリック）すると、端点や頂点だけを動かせます。線の真ん中のグリップは線全体の移動、円の四方のグリップは半径の変更です。</p>
+<h3>プロパティ</h3><p>1つ選ぶと、右のパネルに長さ・座標・半径・レイヤなどが数値で出て、その場で書き換えられます。図面修正ではここを一番よく使います。</p>`},
+ {id:'m8', t:'8. 修正コマンド', les:'l6', h:`
+<p>修正コマンドは、<b>先に図形を選んでからボタンを押す</b>か、<b>ボタンを押してから選んで「選択完了」</b>のどちらでも使えます。</p>
+<div class="tw"><table><tr><th>ボタン</th><th>入力</th><th>手順</th></tr>
+<tr><td>移動</td><td>M</td><td>基点 → 移動先（例 1820,0）</td></tr>
+<tr><td>複写</td><td>CO</td><td>基点 → 複写先（続けて何個でも）→ Enter</td></tr>
+<tr><td>回転</td><td>RO</td><td>中心 → 角度（例 90。反時計回りが＋）</td></tr>
+<tr><td>鏡像</td><td>MI</td><td>対称軸の2点 → 元を「残す／消す」</td></tr>
+<tr><td>オフセット</td><td>O</td><td>距離 → 図形 → 作る側。続けて何本でも。壁厚や通り芯の作図に。</td></tr>
+<tr><td>トリム</td><td>TR</td><td>切り取りたい部分をクリック。交わる図形すべてが境界になる（境界がない線は図形ごと削除）。</td></tr>
+<tr><td>延長</td><td>EX</td><td>延ばしたい線の端の近くをクリック。いちばん近い図形まで延びる。</td></tr>
+<tr><td>コーナー</td><td>F</td><td>2本の線を順にクリック（残したい側）。延ばす・切るをして角を作る。</td></tr>
+<tr><td>分解</td><td>X</td><td>ポリライン（矩形）をばらばらの線にする。</td></tr>
+<tr><td>削除</td><td>E</td><td>選んだ図形を消す（Deleteキーでも）。</td></tr></table></div>
+<div class="tipbox">トリムの「交わる図形がすべて境界になる」動きは、AutoCAD 2021以降のクイックモードと同じです。</div>`},
+ {id:'m9', t:'9. 測る（距離・面積）', les:'l8', h:`
+<p><b>距離</b>（DI）：2点を指定すると、長さ・ΔX・ΔY・角度が出ます。<b>面積</b>（AA）：閉じた図形をクリックするか、「頂点を順に指定する」で囲むと、面積と周長が出ます。</p>
+<p>面積には、地盤変動影響調査算定要領（岡山市版の例）の端数処理（m単位で計算し、小数第2位まで・第3位切捨て）を当てはめた値も表示します。例：3.64m×2.73m＝9.9372㎡ → <b>9.93㎡</b>。実務では、発注者の要領に従ってください。</p>`},
+ {id:'m10', t:'10. 補償調査の図面を描く', les:'l10', h:`
+<p>事前・事後調査の建物平面図は縮尺1/100で作り、撮影した位置や損傷の位置を書き込みます。このアプリの「補償」グループはそのための道具です。</p>
+<div class="tw"><table><tr><th>レイヤ</th><th>入れる物</th></tr>
+<tr><td>0 通り芯</td><td>柱・壁の中心線（一点鎖線）。面積は中心間で測るのが基本。</td></tr>
+<tr><td>1 壁</td><td>壁の線</td></tr><tr><td>2 建具・家具</td><td>戸・窓・家具</td></tr>
+<tr><td>3 寸法</td><td>寸法（自動でここに入る設定）</td></tr><tr><td>4 文字</td><td>室名・仕上げ・損傷の注記</td></tr>
+<tr><td>5 損傷</td><td>亀裂などの損傷線（「損傷線」で自動）</td></tr><tr><td>6 写真</td><td>撮影位置（「撮影」で自動・番号付き）</td></tr>
+<tr><td>7 補助線</td><td>作図のための仮の線（点線）。印刷前に非表示に。</td></tr></table></div>
+<ul><li><b>撮影位置</b>：立ち位置 → 向けた方向。番号は1から自動。写真台帳の番号と合わせます。</li>
+<li><b>損傷線</b>：折れ線で描き、近くに「亀裂 W0.5mm L30cm」のように損傷名と程度（幅はmm、長さはcm）を書きます。</li>
+<li>壁の厚みは、通り芯から「オフセット」で両側に振り分けて描くと正確です（壁厚120mmなら60mmずつ）。</li></ul>`},
+ {id:'m11', t:'11. レイヤ', les:'l11', h:`
+<ul><li><b>現在レイヤ</b>：これから描く図形が入るレイヤ。下のバーかレイヤタブで変えます。</li>
+<li><b>表示／非表示</b>：見せるかどうか。非表示の図形はスナップもしません。</li>
+<li><b>ロック</b>：見えてスナップもするが、選択・編集はできない。大事な線を守るときに。</li>
+<li>図形のレイヤは、選んでプロパティの「レイヤ」で移せます。</li></ul>`},
+ {id:'m12', t:'12. 保存と書き出し', les:'l12', h:`
+<ul><li><b>自動保存</b>：図面と設定は、この端末のブラウザに自動で保存されます（同じ端末・同じブラウザで開けば続きから）。</li>
+<li><b>図面データを保存／開く</b>：このアプリ用のデータ（.json）。パソコンとiPhoneの間はメールやAirDropで受け渡しできます。</li>
+<li><b>PNG画像</b>：A3用紙ごと、1/100の画像に。印刷や共有に。表示中のレイヤだけが出ます。</li>
+<li><b>DXF</b>：ほかのCADで開くための形式（単位mm・実寸）。レイヤ名は A-WALL（壁）・A-DIMS（寸法）のような英字になります。寸法は線と文字に分解して書き出します。日本語の文字は \\U+ 形式で書くため、ソフトによっては文字化けすることがあります。</li></ul>`},
+ {id:'m13', t:'13. コマンド・キー一覧', h:`
+<div class="tw"><table><tr><th>コマンド</th><th>入力</th><th>コマンド</th><th>入力</th></tr>
+<tr><td>線</td><td>L</td><td>移動</td><td>M</td></tr><tr><td>ポリライン</td><td>PL</td><td>複写</td><td>CO</td></tr>
+<tr><td>矩形</td><td>REC</td><td>回転</td><td>RO</td></tr><tr><td>円</td><td>C</td><td>鏡像</td><td>MI</td></tr>
+<tr><td>円弧</td><td>A</td><td>オフセット</td><td>O</td></tr><tr><td>文字</td><td>T</td><td>トリム</td><td>TR</td></tr>
+<tr><td>寸法</td><td>DIM</td><td>延長</td><td>EX</td></tr><tr><td>撮影位置</td><td>PH</td><td>コーナー</td><td>F</td></tr>
+<tr><td>損傷線</td><td>DMG</td><td>分解</td><td>X</td></tr><tr><td>距離</td><td>DI</td><td>削除</td><td>E</td></tr>
+<tr><td>面積</td><td>AA</td><td>元に戻す</td><td>U・Ctrl＋Z</td></tr></table></div>
+<div class="tw"><table><tr><th>キー</th><th>動作</th></tr>
+<tr><td><kbd>Enter</kbd>・<kbd>Space</kbd></td><td>確定。何もしていないときは直前のコマンドをもう一度</td></tr>
+<tr><td><kbd>Esc</kbd></td><td>取消・選択解除</td></tr><tr><td><kbd>Delete</kbd></td><td>選んだ図形を削除</td></tr>
+<tr><td><kbd>F3</kbd>／<kbd>F8</kbd>／<kbd>F9</kbd>／<kbd>F10</kbd></td><td>スナップ／直交／グリッド吸着／極トラッキングの切替</td></tr>
+<tr><td><kbd>Ctrl</kbd>＋<kbd>Z</kbd>／<kbd>Y</kbd>／<kbd>A</kbd></td><td>元に戻す／やり直し／すべて選択</td></tr></table></div>`},
+ {id:'m14', t:'14. 他のCADとの対応', h:`
+<p>会社で使うCADは入社後に確認しますが、考え方は共通です。名前の対応の目安です（製品・バージョンで細部は異なります）。</p>
+<div class="tw"><table><tr><th>このアプリ</th><th>AutoCAD</th><th>Jw_cad</th></tr>
+<tr><td>線</td><td>線分（LINE）</td><td>線（／）</td></tr><tr><td>ポリライン</td><td>ポリライン（PLINE）</td><td>連続線</td></tr>
+<tr><td>矩形</td><td>長方形（RECTANG）</td><td>矩形（□）</td></tr><tr><td>円・円弧</td><td>円（CIRCLE）・円弧（ARC）</td><td>円（○）</td></tr>
+<tr><td>文字</td><td>文字記入（TEXT）</td><td>文字（A）</td></tr><tr><td>寸法</td><td>長さ寸法記入・平行寸法記入</td><td>寸法</td></tr>
+<tr><td>移動・複写</td><td>移動（MOVE）・複写（COPY）</td><td>移動・複写</td></tr><tr><td>回転・鏡像</td><td>回転（ROTATE）・鏡像（MIRROR）</td><td>移動・複写の「回転角」「反転」</td></tr>
+<tr><td>オフセット</td><td>オフセット（OFFSET）</td><td>複線</td></tr><tr><td>トリム・延長</td><td>トリム（TRIM）・延長（EXTEND）</td><td>伸縮</td></tr>
+<tr><td>コーナー</td><td>フィレット（半径0）</td><td>コーナー</td></tr><tr><td>距離・面積</td><td>計測（DIST・AREA）</td><td>測定</td></tr>
+<tr><td>スナップ（端点・交点など）</td><td>オブジェクトスナップ</td><td>右クリック（読取点）</td></tr>
+<tr><td>直交・極トラッキング</td><td>直交モード・極トラッキング</td><td>水平・垂直</td></tr></table></div>
+<p>Jw_cadは、左クリックで任意の点、右クリックで既存の端点や交点を読み取るのが基本です。「設定」で右クリックをJw_cad風にすると、その感覚で練習できます。</p>`},
+ {id:'m15', t:'15. 困ったとき', h:`
+<div class="tw"><table><tr><th>こんなとき</th><th>こうする</th></tr>
+<tr><td>思った所に点が付かない</td><td>スナップのマーク（□△×）が出てからクリック。吸い付きすぎるときは下のバーで一部をオフに。</td></tr>
+<tr><td>線が斜めにならない</td><td>「直交」がオンになっていないか確認。</td></tr>
+<tr><td>数値を入れても反応しない</td><td>先にツール（線・矩形など）を選ぶ。上のプロンプトが「次の点を指定」などになっているか確認。</td></tr>
+<tr><td>図面が見えなくなった</td><td>右下の「全体」。レイヤが非表示になっていないかも確認。</td></tr>
+<tr><td>図形が選べない</td><td>そのレイヤがロックされていないか確認。</td></tr>
+<tr><td>操作を間違えた</td><td>「取消」で今の操作をやめ、「戻す」で1つ前へ。</td></tr>
+<tr><td>iPhoneで細かい所が押せない</td><td>2本指で拡大してから。指を置いたままルーペで合わせ、離した所が点になります。</td></tr></table></div>`}
+];
+function openManual(id){
+  const d = $('#manual');
+  $('#manNav').innerHTML = '<h2>説明書</h2>' + MAN.map(m => '<button data-m="'+m.id+'">'+esc(m.t)+'</button>').join('');
+  const show = mid => { const m = MAN.find(x => x.id === mid) || MAN[0];
+    $$('#manNav button').forEach(b => b.setAttribute('aria-current', b.dataset.m === m.id ? 'true' : 'false'));
+    const L = m.les ? LES.find(x => x.id === m.les) : null;
+    $('#manBody').innerHTML = '<h2>'+esc(m.t)+'</h2>'+m.h+(L ? '<div class="row" style="margin-top:18px"><button class="sb go" data-golesson="'+L.id+'">この内容を練習する（レッスン「'+esc(L.t)+'」）</button></div>' : '');
+    $('#manBody').scrollTop = 0; st.man = m.id; save();
+    const gb = $('[data-golesson]', $('#manBody')); if(gb) gb.addEventListener('click', () => { d.close(); startLesson(gb.dataset.golesson); }); };
+  $$('#manNav button').forEach(b => b.addEventListener('click', () => show(b.dataset.m)));
+  show(id || st.man || 'm1');
+  if(typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open', '');
+}
+$('#bMan').addEventListener('click', () => openManual());
+
+/* ================= 起動 ================= */
+function renderAll(){ renderTools(); renderBar(); renderLayers(); renderSettings(); renderProps(); renderLearn(); renderPrompt(); updateUndo(); applyView(); }
+applyTheme();
+const savedOpen = (st.sideOpen === null || st.sideOpen === undefined) ? isWide() : !!st.sideOpen;
+showSide(st.side || 'prop', true);
+setSideOpen(savedOpen);
+renderAll();
+if(window.ResizeObserver) new ResizeObserver(() => applyView()).observe(svg); else window.addEventListener('resize', applyView);
+requestAnimationFrame(() => { if(doc.ents.length) fitAll(true); else { view.s = clampS(W()/16000); view.cx = 9000; view.cy = 9000; applyView(); } });
+if(!st.seen){ st.seen = 1; save(); setTimeout(() => toast('はじめての方は、上の「説明書」と「練習」からどうぞ', 5000), 400); }
+window.__cad = {submit, startCmd, clickWorld:(x,y,o) => { const s = toScreen(P(x,y)); clickAt(s, o || {}); }, hoverWorld:(x,y) => { const s = toScreen(P(x,y)); hoverAt(s, false); }, doc:() => doc, sel:() => sel, st:() => st, ev, startLesson, tut:() => tut, view:() => view, buildDXF, selectIds:ids => { sel.clear(); ids.forEach(i => sel.add(i)); selChanged(); }};
+})();
+
+</script>
+</body>
+</html>
